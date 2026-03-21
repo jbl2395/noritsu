@@ -19,7 +19,7 @@
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
   --header-h:56px;
-  --strip-h:0px; /* JSで設定 */
+  --strip-open-h:280px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
@@ -46,7 +46,7 @@ margin-top:calc(var(–header-h) + var(–safe-top));
 min-height:calc(100vh - var(–header-h) - var(–safe-top));
 }
 
-/* PC Canvas Panel — fixed left column */
+/* PC Canvas Panel */
 .canvas-panel{
 background:var(–canvas-bg);
 position:fixed;
@@ -70,7 +70,7 @@ canvas{display:block;}
 .leg{display:flex;align-items:center;gap:4px;font-size:10px;color:rgba(255,255,255,.5);font-family:var(–cond);letter-spacing:1px;}
 .leg-dot{width:10px;height:10px;border-radius:1px;flex-shrink:0;}
 
-/* PC Form Panel — offset by canvas width */
+/* PC Form Panel */
 .form-panel{grid-column:2;padding:16px;overflow-y:auto;}
 
 /* ══ MOBILE CANVAS STRIP ══ */
@@ -101,7 +101,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 input[type=number]:focus,input[type=text]:focus,select:focus,textarea:focus{outline:none;border-color:var(–red);box-shadow:0 0 0 2px rgba(200,40,30,.12);}
 input[type=number]{width:100px;}input[type=text]{width:160px;}input.w-short{width:80px;}
 select{min-width:130px;padding:6px 10px;background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’ viewBox=‘0 0 10 6’%3E%3Cpath d=‘M1 1l4 4 4-4’ stroke=’%23888’ stroke-width=‘1.5’ fill=‘none’/%3E%3C/svg%3E”);background-repeat:no-repeat;background-position:right 8px center;padding-right:28px;}
-/* disabled style */
 input:disabled,select:disabled{background:var(–gray2);color:var(–gray4);cursor:not-allowed;opacity:.6;}
 .unit{font-size:11px;color:var(–gray4);white-space:nowrap;}
 .req{color:var(–red);margin-left:2px;}
@@ -175,7 +174,7 @@ transition:height .3s ease;
 .canvas-strip.expanded{height:var(–strip-open-h,280px);}
 .canvas-strip.collapsed{height:38px;}
 
-.strip-toggle{display:flex;align-items:center;gap:8px;padding:0 14px;height:38px;cursor:pointer;background:rgba(200,40,30,.18);border-bottom:1px solid rgba(255,255,255,.08);}
+.strip-toggle{display:flex;align-items:center;gap:8px;padding:0 14px;height:38px;cursor:pointer;background:rgba(200,40,30,.18);border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
 .strip-title{font-family:var(–cond);font-size:11px;color:rgba(255,255,255,.7);letter-spacing:2px;text-transform:uppercase;}
 .strip-mode{font-size:10px;color:var(–red);background:rgba(200,40,30,.2);padding:1px 8px;border-radius:2px;font-family:var(–cond);letter-spacing:1px;}
 .strip-chevron{margin-left:auto;font-size:13px;color:rgba(255,255,255,.5);transition:transform .3s;}
@@ -185,7 +184,6 @@ transition:height .3s ease;
 .canvas-wrap-mobile{display:flex;justify-content:center;align-items:center;overflow:hidden;}
 .canvas-legend-mobile{display:flex;flex-wrap:wrap;gap:8px;padding:4px 14px;border-top:1px solid rgba(255,255,255,.08);height:26px;align-items:center;flex-shrink:0;}
 
-/* Form pushed below fixed strip — margin-topはJSで動的設定 */
 .form-panel{padding:12px;padding-bottom:calc(16px + var(–safe-bottom));margin-top:0;}
 
 input[type=number],input[type=text],select,textarea{font-size:16px;padding:10px 12px;border-radius:6px;border-width:1.5px;}
@@ -221,7 +219,7 @@ canvas{border:1px solid #ccc;max-width:100%;}.form-panel{display:none;}
   <div class="header-date" id="header-date"></div>
 </header>
 
-<!-- MOBILE CANVAS STRIP (fixed, open by default) -->
+<!-- MOBILE CANVAS STRIP -->
 
 <div class="canvas-strip expanded" id="canvas-strip">
   <div class="strip-toggle" onclick="toggleMobileCanvas()">
@@ -229,7 +227,7 @@ canvas{border:1px solid #ccc;max-width:100%;}.form-panel{display:none;}
     <span class="strip-mode" id="canvas-mode-label-m">概要表示</span>
     <span class="strip-chevron">▼</span>
   </div>
-  <div class="canvas-wrap-mobile" id="canvas-wrap-mobile" style="flex:1;">
+  <div class="canvas-wrap-mobile" id="canvas-wrap-mobile">
     <canvas id="cv-mobile"></canvas>
   </div>
   <div class="canvas-legend-mobile">
@@ -242,7 +240,7 @@ canvas{border:1px solid #ccc;max-width:100%;}.form-panel{display:none;}
 </div>
 
 <div class="layout">
-  <!-- PC CANVAS PANEL (fixed) -->
+  <!-- PC CANVAS PANEL -->
   <div class="canvas-panel">
     <div class="canvas-header">
       <span class="canvas-title">配置プレビュー</span>
@@ -407,7 +405,7 @@ document.getElementById('header-date').textContent=
 
 // ── STATE ──
 let stepItems=[],cpktItems=[],epktItems=[],pktItems=[],grvItems=[],holeItems=[],tapItems=[];
-let idCounter=0,currentHint='',mobileCanvasOpen=true;
+let idCounter=0,mobileCanvasOpen=true;
 
 const isMobile=()=>window.innerWidth<960;
 
@@ -425,67 +423,60 @@ function toggleMobileCanvas(){
   mobileCanvasOpen=!mobileCanvasOpen;
   const strip=document.getElementById('canvas-strip');
   strip.className='canvas-strip '+(mobileCanvasOpen?'expanded':'collapsed');
-  // transitionが終わってからDOMを測定して更新
   setTimeout(()=>{
     updateFormPadding();
     if(mobileCanvasOpen){resizeCanvas();drawAllCanvas();}
   },320);
 }
 
-// ── STRIP HEIGHT CALC ──
-// ヘッダーとストリップの実際の高さをDOMから直接取得
-function getFixedHeights(){
-  const header=document.querySelector('header');
-  const strip=document.getElementById('canvas-strip');
-  const headerH=header?header.getBoundingClientRect().height:52;
-  const stripH=(isMobile()&&strip)?strip.getBoundingClientRect().height:0;
-  return{headerH,stripH};
-}
-
+// ── STRIP HEIGHT ──
 function setMobileStripHeight(){
   if(!isMobile())return;
-  // ストリップ全体の高さ = 画面の38%（トグル38px＋描画エリア＋レジェンド26px）
-  const h=Math.max(200,Math.min(340,Math.floor(window.innerHeight*0.38)));
+  const h=Math.max(200,Math.min(320,Math.floor(window.innerHeight*0.36)));
   document.documentElement.style.setProperty('--strip-open-h',h+'px');
 }
 
-// ── FORM PADDING (mobile: DOMの実測値で計算) ──
+// ── FORM PADDING ──
+// PWAスタンドアロン含む全環境で正確にオフセット計算
 function updateFormPadding(){
   if(!isMobile())return;
-  // 少し遅延してDOMが確定してから測定
-  requestAnimationFrame(()=>{
-    const{headerH,stripH}=getFixedHeights();
-    const totalOffset=headerH+stripH+8; // 8px余白
-    document.getElementById('form-panel').style.marginTop=totalOffset+'px';
-    document.getElementById('form-panel').style.paddingTop='12px';
-  });
+  const header=document.querySelector('header');
+  const strip=document.getElementById('canvas-strip');
+  if(!header||!strip)return;
+
+  const headerBottom=header.getBoundingClientRect().bottom;
+  // stripが表示中の場合はその底部を使う、collapsedなら38px分のみ
+  const stripH=mobileCanvasOpen
+    ? strip.getBoundingClientRect().height
+    : 38;
+  const totalOffset=headerBottom+stripH+8;
+  const fp=document.getElementById('form-panel');
+  fp.style.marginTop=totalOffset+'px';
 }
 
-// ── CANVAS SIZE: 実際の描画エリアをDOMから直接取得 ──
+// ── CANVAS RESIZE ──
 function resizeCanvas(){
-  const mg=40; // テキスト用マージン
-
   if(!isMobile()){
     const wrap=document.getElementById('canvas-wrap');
     const canvas=document.getElementById('cv');
-    if(!wrap.clientWidth||!wrap.clientHeight)return;
+    if(!wrap||!wrap.clientWidth||!wrap.clientHeight)return;
     canvas.width=wrap.clientWidth;
     canvas.height=wrap.clientHeight;
   }
 
   if(isMobile()&&mobileCanvasOpen){
     const strip=document.getElementById('canvas-strip');
-    const toggle=document.querySelector('.strip-toggle');
-    const legend=document.querySelector('.canvas-legend-mobile');
+    const toggle=strip.querySelector('.strip-toggle');
+    const legend=strip.querySelector('.canvas-legend-mobile');
     const wrap=document.getElementById('canvas-wrap-mobile');
     if(!strip||!wrap)return;
-    // ストリップ全体からトグルバーとレジェンドを引いた実際の描画高さ
+
     const stripH=strip.getBoundingClientRect().height;
     const toggleH=toggle?toggle.getBoundingClientRect().height:38;
     const legendH=legend?legend.getBoundingClientRect().height:26;
-    const drawH=Math.max(stripH-toggleH-legendH,60);
-    const drawW=wrap.clientWidth||window.innerWidth;
-    // wrap自体にも高さを明示的に設定
+    const drawH=Math.max(60,stripH-toggleH-legendH);
+    const drawW=strip.clientWidth||window.innerWidth;
+
     wrap.style.height=drawH+'px';
     const canvas=document.getElementById('cv-mobile');
     canvas.width=drawW;
@@ -515,13 +506,11 @@ function toggleChk(type){
       if(type==='hole'&&holeItems.length===0)addHole();
       if(type==='tap'&&tapItems.length===0)addTap();
     }else{lbl.classList.remove('checked');if(sec)sec.classList.remove('active');}
-    // 外周加工ON/OFFでコーナーボタンの有効/無効を切り替え
     if(type==='gai') updateGaiCornerState();
     redraw();autoUpdate();
   },10);
 }
 
-// 外周加工チェック状態でコーナーR/Cの有効無効を制御
 function updateGaiCornerState(){
   const on=document.getElementById('chk-gai').checked;
   ['gai-btn-R','gai-btn-C','gai-btn-0'].forEach(id=>{
@@ -531,7 +520,6 @@ function updateGaiCornerState(){
   const valInput=document.getElementById('gai-corner-val');
   if(valInput) valInput.disabled=!on;
   if(!on){
-    // OFFにしたらリセット
     document.getElementById('gai-corner-type').value='';
     ['gai-btn-R','gai-btn-C','gai-btn-0'].forEach(id=>{
       document.getElementById(id)?.classList.remove('active');
@@ -548,56 +536,38 @@ function mkId(){return++idCounter;}
 // ══════════════════════════════
 // CANVAS DRAWING
 // ══════════════════════════════
-
-// 1角のみRを入れるパス（角開放ポケット用）
-// corner: 'tl'|'tr'|'bl'|'br' — どの角にRを入れるか
 function oneCornerRoundPath(ctx,x,y,w,h,r,corner){
   r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);
   const x2=x+w,y2=y+h;
   if(corner==='tl'&&r>0){
-    // 左上のみR: Rの終点から開始→右上→右下→左下→左辺→R弧
-    ctx.moveTo(x+r,y);
-    ctx.lineTo(x2,y);ctx.lineTo(x2,y2);ctx.lineTo(x,y2);
+    ctx.moveTo(x+r,y);ctx.lineTo(x2,y);ctx.lineTo(x2,y2);ctx.lineTo(x,y2);
     ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);
   } else if(corner==='tr'&&r>0){
-    // 右上のみR
-    ctx.moveTo(x,y);
-    ctx.lineTo(x2-r,y);ctx.arcTo(x2,y,x2,y+r,r);
+    ctx.moveTo(x,y);ctx.lineTo(x2-r,y);ctx.arcTo(x2,y,x2,y+r,r);
     ctx.lineTo(x2,y2);ctx.lineTo(x,y2);
   } else if(corner==='bl'&&r>0){
-    // 左下のみR
-    ctx.moveTo(x,y);
-    ctx.lineTo(x2,y);ctx.lineTo(x2,y2);
-    ctx.lineTo(x+r,y2);ctx.arcTo(x,y2,x,y2-r,r);
-    ctx.lineTo(x,y);
+    ctx.moveTo(x,y);ctx.lineTo(x2,y);ctx.lineTo(x2,y2);
+    ctx.lineTo(x+r,y2);ctx.arcTo(x,y2,x,y2-r,r);ctx.lineTo(x,y);
   } else if(corner==='br'&&r>0){
-    // 右下のみR
-    ctx.moveTo(x,y);
-    ctx.lineTo(x2,y);ctx.lineTo(x2,y2-r);
-    ctx.arcTo(x2,y2,x2-r,y2,r);
-    ctx.lineTo(x,y2);ctx.lineTo(x,y);
-  } else {
-    ctx.rect(x,y,w,h);return;
-  }
+    ctx.moveTo(x,y);ctx.lineTo(x2,y);ctx.lineTo(x2,y2-r);
+    ctx.arcTo(x2,y2,x2-r,y2,r);ctx.lineTo(x,y2);ctx.lineTo(x,y);
+  } else {ctx.rect(x,y,w,h);return;}
   ctx.closePath();
 }
 
-// 2角のみR（辺開放ポケット用）: corners=['tl','tr'] など
 function twoCornerRoundPath(ctx,x,y,w,h,r,corners){
   r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);
   if(r<=0){ctx.rect(x,y,w,h);return;}
   const x2=x+w,y2=y+h;
   const tl=corners.includes('tl'),tr=corners.includes('tr'),br=corners.includes('br'),bl=corners.includes('bl');
   ctx.moveTo(x+(tl?r:0),y);
-  ctx.lineTo(x2-(tr?r:0),y);
-  if(tr)ctx.arcTo(x2,y,x2,y+r,r); ctx.lineTo(x2,y2-(br?r:0));
-  if(br)ctx.arcTo(x2,y2,x2-r,y2,r); ctx.lineTo(x+(bl?r:0),y2);
-  if(bl)ctx.arcTo(x,y2,x,y2-r,r); ctx.lineTo(x,y+(tl?r:0));
-  if(tl)ctx.arcTo(x,y,x+r,y,r);
+  ctx.lineTo(x2-(tr?r:0),y);if(tr)ctx.arcTo(x2,y,x2,y+r,r);
+  ctx.lineTo(x2,y2-(br?r:0));if(br)ctx.arcTo(x2,y2,x2-r,y2,r);
+  ctx.lineTo(x+(bl?r:0),y2);if(bl)ctx.arcTo(x,y2,x,y2-r,r);
+  ctx.lineTo(x,y+(tl?r:0));if(tl)ctx.arcTo(x,y,x+r,y,r);
   ctx.closePath();
 }
 
-// 4角R（閉鎖ポケット用）
 function roundRectPath(ctx,x,y,w,h,r){
   r=Math.min(r,Math.abs(w)/2,Math.abs(h)/2);
   if(r<=0){ctx.rect(x,y,w,h);return;}
@@ -608,7 +578,6 @@ function roundRectPath(ctx,x,y,w,h,r){
   ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();
 }
 
-// 外形コーナー C面取り
 function chamferRectPath(ctx,x,y,w,h,c){
   c=Math.min(c,Math.abs(w)/2,Math.abs(h)/2);
   if(c<=0){ctx.rect(x,y,w,h);return;}
@@ -617,19 +586,17 @@ function chamferRectPath(ctx,x,y,w,h,c){
   ctx.lineTo(x2-c,y2);ctx.lineTo(x+c,y2);ctx.lineTo(x,y2-c);ctx.lineTo(x,y+c);ctx.closePath();
 }
 
-// シンプルな寸法ラベル描画
 function drawDimLabel(ctx,cx,cy,text,color){
   color=color||'rgba(255,255,255,.9)';
   ctx.font='bold 10px monospace';
   ctx.textAlign='center';ctx.textBaseline='middle';
   const w=ctx.measureText(text).width+8,h=14;
-  ctx.fillStyle='rgba(0,0,0,.55)';
-  ctx.fillRect(cx-w/2,cy-h/2,w,h);
-  ctx.fillStyle=color;
-  ctx.fillText(text,cx,cy);
+  ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(cx-w/2,cy-h/2,w,h);
+  ctx.fillStyle=color;ctx.fillText(text,cx,cy);
 }
 
 function drawCanvas(canvas){
+  if(!canvas)return;
   const ctx=canvas.getContext('2d');
   const W=canvas.width,H=canvas.height;
   if(!W||!H)return;
@@ -643,22 +610,21 @@ function drawCanvas(canvas){
   const wx=parseFloat(document.getElementById('wx').value);
   const wy=parseFloat(document.getElementById('wy').value);
   if(!wx||!wy){
-    ctx.fillStyle='rgba(255,255,255,.5)';let fs=13;const msg='ワーク寸法を入力してください';
+    ctx.fillStyle='rgba(255,255,255,.5)';
+    let fs=13;const msg='ワーク寸法を入力してください';
     ctx.font=fs+'px sans-serif';
     while(ctx.measureText(msg).width>W-20&&fs>8){fs--;ctx.font=fs+'px sans-serif';}
     ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(msg,W/2,H/2);return;
   }
 
-  // スケール：テキスト用マージンを考慮してワークを最大化
   const mg=44;
   const availW=W-mg*2,availH=H-mg*2;
   const scale=Math.min(availW/wx,availH/wy);
   const drawW=wx*scale,drawH=wy*scale;
   const startX=(W-drawW)/2,startY=(H-drawH)/2;
-  const ox=startX+drawW,oy=startY+drawH; // 右下原点
+  const ox=startX+drawW,oy=startY+drawH;
   function toC(x,y){return[ox-x*scale,oy-y*scale];}
 
-  // 外形（外周加工あり時のみR/C適用）
   const gaiOn=document.getElementById('chk-gai').checked;
   const gaiType=gaiOn?document.getElementById('gai-corner-type').value:'';
   const gaiVal=parseFloat(document.getElementById('gai-corner-val').value)||0;
@@ -671,19 +637,18 @@ function drawCanvas(canvas){
   ctx.fillStyle='rgba(30,40,60,.85)';ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,.88)';ctx.lineWidth=1.8;ctx.stroke();
 
-  // ワーク寸法テキスト
   ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='10px monospace';
   ctx.textAlign='center';ctx.textBaseline='top';
   ctx.fillText('X:'+wx+'mm',startX+drawW/2,oy+6);
   ctx.save();ctx.translate(startX-8,startY+drawH/2);ctx.rotate(-Math.PI/2);
   ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('Y:'+wy+'mm',0,0);ctx.restore();
 
-  // 原点マーク
   ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='9px monospace';ctx.textAlign='left';ctx.textBaseline='top';
   ctx.fillText('(0,0)',ox+3,oy+3);
   ctx.beginPath();ctx.arc(ox,oy,3,0,Math.PI*2);ctx.fill();
 
-  // ── 段加工 ──
+  const sl={right:'右辺',left:'左辺',top:'上辺',bottom:'下辺'};
+
   if(document.getElementById('chk-step').checked)stepItems.forEach(id=>{
     const side=document.getElementById('step-side-'+id)?.value;
     const a=parseFloat(document.getElementById('step-a-'+id)?.value)||0;
@@ -697,33 +662,28 @@ function drawCanvas(canvas){
     ctx.beginPath();ctx.rect(rx,ry,rw,rh);
     ctx.fillStyle='rgba(0,212,255,.15)';ctx.fill();
     ctx.strokeStyle='rgba(0,212,255,.7)';ctx.lineWidth=1;ctx.stroke();
-    if(a>0)drawDimLabel(ctx,rx+rw/2,ry+rh/2,'A:'+a+(z?'  Z:'+z:'')+'mm','rgba(0,212,255,1)');
+    if(a>0)drawDimLabel(ctx,rx+rw/2,ry+rh/2,'A:'+a+(z?' Z:'+z:'')+'mm','rgba(0,212,255,1)');
   });
 
-  // ── 角開放ポケット（内側1角のみR）──
   if(document.getElementById('chk-cpkt').checked)cpktItems.forEach(id=>{
     const corner=document.getElementById('cpkt-corner-'+id)?.value;
     const a=parseFloat(document.getElementById('cpkt-a-'+id)?.value)||0;
     const b=parseFloat(document.getElementById('cpkt-b-'+id)?.value)||0;
     const r=(parseFloat(document.getElementById('cpkt-r-'+id)?.value)||0)*scale;
     if(!corner||!a||!b)return;
-    let px,py;
-    // 角開放ポケット：選択角から内側に向かう1角にのみR
-    // 右下選択→ポケットは右下角から広がる→内側角=左上(tl)
     const rmap={rb:'tl',rt:'bl',lb:'tr',lt:'br'};
     const innerCorner=rmap[corner]||'tl';
+    let px,py;
     if(corner==='rb'){[px,py]=toC(a,b);}
     else if(corner==='rt'){[px,py]=toC(a,wy);}
     else if(corner==='lb'){[px,py]=toC(wx,b);}
     else{[px,py]=toC(wx,wy);}
-    ctx.beginPath();
-    oneCornerRoundPath(ctx,px,py,a*scale,b*scale,r,innerCorner);
+    ctx.beginPath();oneCornerRoundPath(ctx,px,py,a*scale,b*scale,r,innerCorner);
     ctx.fillStyle='rgba(255,107,53,.2)';ctx.fill();
     ctx.strokeStyle='rgba(255,107,53,.88)';ctx.lineWidth=1.2;ctx.stroke();
     drawDimLabel(ctx,px+a*scale/2,py+b*scale/2,'A:'+a+' B:'+b+'mm','rgba(255,150,80,1)');
   });
 
-  // ── 辺開放ポケット（奥側2角にR）──
   if(document.getElementById('chk-epkt').checked)epktItems.forEach(id=>{
     const side=document.getElementById('epkt-side-'+id)?.value;
     const c=parseFloat(document.getElementById('epkt-c-'+id)?.value)||0;
@@ -732,24 +692,16 @@ function drawCanvas(canvas){
     const r=(parseFloat(document.getElementById('epkt-r-'+id)?.value)||0)*scale;
     if(!side||!a||!b)return;
     let px,py,pw,ph,innerCorners;
-    // 開放辺の反対側2角にR
-    if(side==='bottom'){
-      [px,py]=toC(c+a/2,b);pw=a*scale;ph=b*scale;innerCorners=['tl','tr'];
-    } else if(side==='top'){
-      [px,py]=toC(c+a/2,wy);pw=a*scale;ph=b*scale;innerCorners=['bl','br'];
-    } else if(side==='right'){
-      [px,py]=toC(b,c+a/2);pw=b*scale;ph=a*scale;innerCorners=['tl','bl'];
-    } else {
-      [px,py]=toC(wx,c+a/2);pw=b*scale;ph=a*scale;innerCorners=['tr','br'];
-    }
-    ctx.beginPath();
-    twoCornerRoundPath(ctx,px,py,pw,ph,r,innerCorners);
+    if(side==='bottom'){[px,py]=toC(c+a/2,b);pw=a*scale;ph=b*scale;innerCorners=['tl','tr'];}
+    else if(side==='top'){[px,py]=toC(c+a/2,wy);pw=a*scale;ph=b*scale;innerCorners=['bl','br'];}
+    else if(side==='right'){[px,py]=toC(b,c+a/2);pw=b*scale;ph=a*scale;innerCorners=['tl','bl'];}
+    else{[px,py]=toC(wx,c+a/2);pw=b*scale;ph=a*scale;innerCorners=['tr','br'];}
+    ctx.beginPath();twoCornerRoundPath(ctx,px,py,pw,ph,r,innerCorners);
     ctx.fillStyle='rgba(255,107,53,.15)';ctx.fill();
     ctx.strokeStyle='rgba(255,107,53,.78)';ctx.lineWidth=1.2;ctx.stroke();
     drawDimLabel(ctx,px+pw/2,py+ph/2,'A:'+a+' B:'+b+'mm','rgba(255,150,80,1)');
   });
 
-  // ── 閉鎖ポケット（4角すべてR）──
   if(document.getElementById('chk-pkt').checked)pktItems.forEach(id=>{
     const a=parseFloat(document.getElementById('pkt-a-'+id)?.value)||0;
     const b=parseFloat(document.getElementById('pkt-b-'+id)?.value)||0;
@@ -758,15 +710,13 @@ function drawCanvas(canvas){
     const dv=parseFloat(document.getElementById('pkt-d-'+id)?.value);
     if(!a||!b||isNaN(cv)||isNaN(dv))return;
     const[cx,cy]=toC(cv,dv);
-    ctx.beginPath();
-    roundRectPath(ctx,cx-a*scale/2,cy-b*scale/2,a*scale,b*scale,r);
+    ctx.beginPath();roundRectPath(ctx,cx-a*scale/2,cy-b*scale/2,a*scale,b*scale,r);
     ctx.fillStyle='rgba(255,107,53,.12)';ctx.fill();
     ctx.strokeStyle='rgba(255,107,53,.88)';ctx.lineWidth=1.2;ctx.stroke();
     ctx.fillStyle='rgba(255,107,53,.9)';ctx.beginPath();ctx.arc(cx,cy,2.5,0,Math.PI*2);ctx.fill();
     drawDimLabel(ctx,cx,cy,'A:'+a+' B:'+b+'mm','rgba(255,150,80,1)');
   });
 
-  // ── 貫通溝 ──
   if(document.getElementById('chk-grv').checked)grvItems.forEach(id=>{
     const dir=document.getElementById('grv-dir-'+id)?.value;
     const a=parseFloat(document.getElementById('grv-a-'+id)?.value)||0;
@@ -781,7 +731,6 @@ function drawCanvas(canvas){
     drawDimLabel(ctx,gx+gw/2,gy+gh/2,'A:'+a+'mm','rgba(0,212,255,1)');
   });
 
-  // ── 穴 ──
   if(document.getElementById('chk-hole').checked)holeItems.forEach(id=>{
     const d=parseFloat(document.getElementById('hole-d-'+id)?.value)||0;
     if(!d)return;
@@ -792,11 +741,10 @@ function drawCanvas(canvas){
       ctx.fillStyle='rgba(57,255,20,.08)';ctx.fill();
       ctx.strokeStyle='rgba(57,255,20,.85)';ctx.lineWidth=1.2;ctx.stroke();
       ctx.fillStyle='rgba(57,255,20,.6)';ctx.beginPath();ctx.arc(cx,cy,2,0,Math.PI*2);ctx.fill();
-      if(j===0) drawDimLabel(ctx,cx,cy-r-8,'φ'+d+'mm','rgba(57,255,20,1)');
+      if(j===0)drawDimLabel(ctx,cx,cy-r-8,'φ'+d+'mm','rgba(57,255,20,1)');
     });
   });
 
-  // ── タップ ──
   if(document.getElementById('chk-tap').checked)tapItems.forEach(id=>{
     const sz=document.getElementById('tap-size-'+id)?.value;
     const smap={'M2':1,'M3':1.5,'M4':2,'M5':2.5,'M6':3};
@@ -809,7 +757,7 @@ function drawCanvas(canvas){
       const s=r*.6;ctx.strokeStyle='rgba(200,40,30,.6)';ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(cx-s,cy-s);ctx.lineTo(cx+s,cy+s);ctx.stroke();
       ctx.beginPath();ctx.moveTo(cx+s,cy-s);ctx.lineTo(cx-s,cy+s);ctx.stroke();
-      if(j===0) drawDimLabel(ctx,cx,cy-r-8,sz||'?','rgba(200,100,100,1)');
+      if(j===0)drawDimLabel(ctx,cx,cy-r-8,sz||'?','rgba(200,100,100,1)');
     });
   });
 }
@@ -920,7 +868,10 @@ function addTap(){
   document.getElementById('tap-count-lbl').textContent=tapItems.length+'個';
   redraw();autoUpdate();
 }
-function selTap(btn,id,size){btn.closest('.btn-group').querySelectorAll('.grp-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tap-size-'+id).value=size;autoUpdate();}
+function selTap(btn,id,size){
+  btn.closest('.btn-group').querySelectorAll('.grp-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('tap-size-'+id).value=size;autoUpdate();
+}
 
 let coordCounts={};
 function addCoord(type,id){
@@ -1077,27 +1028,39 @@ document.body.removeChild(ta);
 }
 
 // ── INIT ──
-window.addEventListener(‘load’,()=>{
-updateGaiCornerState();
+// PWAスタンドアロン・Safari両対応: 複数タイミングで確実に初期化
+function initLayout(){
 setMobileStripHeight();
-// DOM確定後に実測値で計算
-requestAnimationFrame(()=>{
-requestAnimationFrame(()=>{
-updateFormPadding();
 resizeCanvas();
+updateFormPadding();
 drawAllCanvas();
 autoUpdate();
+}
+
+// DOMContentLoaded後に即実行
+document.addEventListener(‘DOMContentLoaded’,()=>{
+updateGaiCornerState();
+initLayout();
+// 追加の安全タイミング（フォント読み込み後など）
+setTimeout(initLayout, 100);
+setTimeout(initLayout, 500);
 });
-});
+
+// windowロード後にも確実に実行（PWAスタンドアロンでの遅延対策）
+window.addEventListener(‘load’,()=>{
+initLayout();
+setTimeout(initLayout, 200);
 checkPWA();
 });
+
+// リサイズ対応
 window.addEventListener(‘resize’,()=>{
-setMobileStripHeight();
-requestAnimationFrame(()=>{
-updateFormPadding();
-resizeCanvas();
-drawAllCanvas();
+initLayout();
 });
+
+// iOS PWA: visibilitychangeでバックグラウンドから復帰時も再描画
+document.addEventListener(‘visibilitychange’,()=>{
+if(document.visibilityState===‘visible’) initLayout();
 });
 </script>
 
