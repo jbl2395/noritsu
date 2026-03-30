@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="NORITSU">
-<meta name="theme-color" content="#c8281e">
+<meta name="theme-color" content="#1565c0">
 <title>加工依頼・材料発注フォーム - NORITSU PRECISION</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Barlow+Condensed:wght@600;700&display=swap');
@@ -16,7 +16,7 @@
   --black:#1a1a1a;--gray1:#f8f8f8;--gray2:#eeeeee;--gray3:#cccccc;--gray4:#888888;--white:#ffffff;
   --canvas-bg:#0d1018;
   --page-bg:#f2f2f2;
-  --accent:var(--red);/* モード切替で動的変更 */
+  --accent:var(--blue);
   --sans:'Noto Sans JP',sans-serif;--cond:'Barlow Condensed',sans-serif;
   --safe-top:env(safe-area-inset-top,0px);
   --safe-bottom:env(safe-area-inset-bottom,0px);
@@ -55,7 +55,6 @@ header{
   border:none;cursor:pointer;transition:all .25s;
   min-height:32px;white-space:nowrap;text-align:center;
 }
-/* 非アクティブ：ほんのり薄い各色 */
 .mode-btn.mode-red{background:#fce8e6;color:#b06060;}
 .mode-btn.mode-red.active{background:var(--red);color:var(--white);}
 .mode-btn.mode-blue{background:#e3edf8;color:#6080a0;}
@@ -90,9 +89,7 @@ canvas{display:block;}
 
 /* ══ CARDS（共通） ══ */
 .card{background:var(--white);border:1px solid var(--gray2);border-radius:6px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
-/* 工作依頼用カードヘッダー（赤） */
 .card-header{background:var(--red);padding:8px 14px;display:flex;align-items:center;gap:8px;}
-/* 材料発注用カードヘッダー（青） */
 .card-header-blue{background:var(--blue);padding:8px 14px;display:flex;align-items:center;gap:8px;}
 .card-title{font-family:var(--cond);font-size:13px;color:var(--white);letter-spacing:2px;text-transform:uppercase;font-weight:700;}
 .card-num{margin-left:auto;font-size:10px;color:rgba(255,255,255,.6);font-family:var(--cond);letter-spacing:1px;}
@@ -105,7 +102,7 @@ canvas{display:block;}
 .flabel{font-size:12px;color:var(--gray4);text-align:right;padding-right:8px;padding-top:8px;white-space:nowrap;}
 .finput{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 
-/* ══ INPUTS（工作依頼：赤フォーカス） ══ */
+/* ══ INPUTS ══ */
 input[type=number],input[type=text],select,textarea{
   background:var(--white);border:1px solid var(--gray3);color:var(--black);
   font-family:var(--sans);font-size:13px;padding:6px 10px;border-radius:3px;
@@ -120,7 +117,6 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 .unit{font-size:11px;color:var(--gray4);white-space:nowrap;}
 .req{color:var(--red);margin-left:2px;}
 
-/* 材料発注フォーム内の入力は青フォーカス */
 #mat-form input[type=number]:focus,
 #mat-form input[type=text]:focus,
 #mat-form select:focus,
@@ -183,10 +179,9 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 .coord-group{border-top:1px dashed var(--gray2);margin-top:8px;padding-top:8px;}
 
 /* ══ 材料発注フォーム専用 ══ */
-#mat-form{display:none;}
-#work-form{display:block;}
+#mat-form{display:block;}
+#work-form{display:none;}
 
-/* 材質カスケード */
 .mat-sub{display:none;margin-top:8px;}
 .mat-sub.active{display:block;}
 .mat-radio-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
@@ -194,13 +189,43 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 .mat-radio input[type=radio]{display:none;}
 .mat-radio.selected{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
 
-/* カット種別ボタン */
 .cut-btn{padding:8px 16px;background:var(--white);border:1.5px solid var(--gray3);color:var(--black);font-size:13px;font-weight:500;border-radius:4px;cursor:pointer;transition:all .15s;min-height:40px;}
 .cut-btn.active{background:var(--blue);border-color:var(--blue);color:var(--white);}
 .cut-btn:hover:not(.active){border-color:var(--blue);color:var(--blue);}
 
-/* プレビュー（材料発注）*/
-.preview-box-blue{background:#f0f7ff;border:1px solid #b3d1f5;border-radius:4px;padding:10px;font-family:monospace;font-size:11px;color:var(--black);line-height:1.9;max-height:360px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;}
+/* プレビュー（材料発注）- 編集可能 */
+.preview-box-blue{background:#f0f7ff;border:1px solid #b3d1f5;border-radius:4px;padding:10px;font-family:monospace;font-size:11px;color:var(--black);line-height:1.9;min-height:120px;height:auto;overflow-y:hidden;white-space:pre-wrap;word-break:break-all;resize:none;width:100%;display:block;}
+.preview-note{font-size:10px;color:var(--blue);margin-bottom:4px;padding:3px 8px;background:#e3f0ff;border-radius:3px;}
+
+/* ══ 件名・宛名フィールド（全幅固定） ══ */
+.subject-field{
+  width:100%;min-width:0;box-sizing:border-box;
+  padding:8px 10px;border:1.5px solid var(--blue);border-radius:4px;
+  font-size:13px;font-family:var(--sans);margin-bottom:6px;
+  background:#f8fbff;display:block;
+}
+.subject-field:focus{outline:none;box-shadow:0 0 0 2px rgba(21,101,192,.15);}
+.subject-field-red{
+  width:100%;min-width:0;box-sizing:border-box;
+  padding:8px 10px;border:1.5px solid var(--red);border-radius:4px;
+  font-size:13px;font-family:var(--sans);margin-bottom:6px;
+  background:#fff8f8;display:block;
+}
+.subject-field-red:focus{outline:none;box-shadow:0 0 0 2px rgba(200,40,30,.12);}
+.recipient-field{
+  width:100%;min-width:0;box-sizing:border-box;
+  padding:8px 10px;border:1.5px solid var(--gray3);border-radius:4px;
+  font-size:13px;font-family:var(--sans);margin-bottom:8px;
+  background:#fafafa;display:block;
+}
+.recipient-field:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(21,101,192,.12);}
+.recipient-field-red{
+  width:100%;min-width:0;box-sizing:border-box;
+  padding:8px 10px;border:1.5px solid var(--gray3);border-radius:4px;
+  font-size:13px;font-family:var(--sans);margin-bottom:8px;
+  background:#fafafa;display:block;
+}
+.recipient-field-red:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 2px rgba(200,40,30,.12);}
 
 /* ══ 設定モーダル ══ */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:center;justify-content:center;}
@@ -230,9 +255,12 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 .btn-add-blue{width:100%;padding:10px;background:none;border:1.5px dashed var(--blue);color:var(--blue);font-size:13px;border-radius:4px;cursor:pointer;margin-top:8px;min-height:44px;transition:all .15s;}
 .btn-add-blue:hover{background:var(--blue-light);}
 
+/* プレビュー対象ハイライト */
+.mat-item-card.preview-target{border-color:var(--blue);box-shadow:0 0 0 2px rgba(21,101,192,.15);}
+
 #pwa-banner{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--black);color:var(--white);padding:14px 16px;padding-bottom:calc(14px + var(--safe-bottom));z-index:999;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
 .pwa-inner{display:flex;align-items:center;gap:12px;}
-.pwa-icon{width:40px;height:40px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:700;color:white;font-size:11px;flex-shrink:0;}
+.pwa-icon{width:40px;height:40px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:700;color:white;font-size:11px;flex-shrink:0;}
 .pwa-text{flex:1;font-size:13px;}.pwa-title{font-weight:700;font-size:14px;}.pwa-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;}
 .pwa-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:24px;cursor:pointer;padding:4px;flex-shrink:0;line-height:1;}
 
@@ -242,7 +270,6 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
   body{font-size:14px;}
   .layout{display:block;margin-top:0;}
   .canvas-panel{display:none;}
-  /* ヘッダー横一列レイアウト調整 */
   header{gap:6px;padding:0 10px;padding-top:var(--safe-top);}
   .logo-block{min-width:58px;}
   .logo-text{font-size:18px;}
@@ -283,6 +310,8 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
   .card{border-radius:6px;}.item-card{background:var(--white);border-width:1.5px;border-radius:6px;padding:12px;}.dyn-inner{border-radius:6px;}
   .cut-btn{padding:12px 16px;min-height:48px;font-size:14px;border-radius:6px;border-width:1.5px;}
   .mat-radio{padding:12px;min-height:48px;font-size:13px;border-radius:6px;border-width:1.5px;}
+  .subject-field,.subject-field-red{font-size:16px;padding:10px 12px;border-radius:6px;}
+  .recipient-field,.recipient-field-red{font-size:16px;padding:10px 12px;border-radius:6px;}
 }
 @media print{
   body{background:white;}header,.canvas-strip{display:none !important;}
@@ -301,10 +330,10 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
     <div class="logo-text" id="logo-text">NORITSU</div>
     <div class="logo-sub">PRECISION</div>
   </div>
-  <div class="header-title" id="header-title">加工依頼フォーム</div>
+  <div class="header-title" id="header-title">材料発注フォーム</div>
   <div class="mode-switcher">
-    <button class="mode-btn mode-red active" id="btn-mode-work" onclick="switchMode('work')">工作依頼</button>
-    <button class="mode-btn mode-blue" id="btn-mode-mat" onclick="switchMode('mat')">材料発注</button>
+    <button class="mode-btn mode-blue active" id="btn-mode-mat" onclick="switchMode('mat')">材料発注</button>
+    <button class="mode-btn mode-red" id="btn-mode-work" onclick="switchMode('work')">工作依頼</button>
   </div>
   <div class="header-date" id="header-date"></div>
   <button class="btn-settings" onclick="openSettings()" style="margin-left:6px;flex-shrink:0;">⚙</button>
@@ -346,7 +375,7 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 </div>
 
 <!-- MOBILE CANVAS STRIP (工作依頼) -->
-<div class="canvas-strip expanded" id="canvas-strip">
+<div class="canvas-strip expanded" id="canvas-strip" style="display:none">
   <div class="strip-toggle" onclick="toggleMobileCanvas()">
     <span class="strip-title">配置プレビュー</span>
     <span class="strip-mode" id="canvas-mode-label-m">概要表示</span>
@@ -363,7 +392,7 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 </div>
 
 <!-- MOBILE CANVAS STRIP (材料発注) -->
-<div class="canvas-strip expanded" id="mat-canvas-strip" style="display:none">
+<div class="canvas-strip expanded" id="mat-canvas-strip">
   <div class="strip-toggle" onclick="toggleMobileCanvas()">
     <span class="strip-title">材料サイズプレビュー</span>
     <span class="strip-chevron">▼</span>
@@ -376,7 +405,7 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 
 <div class="layout">
   <!-- PC CANVAS (工作依頼) -->
-  <div class="canvas-panel" id="work-canvas-panel">
+  <div class="canvas-panel" id="work-canvas-panel" style="display:none">
     <div class="canvas-header">
       <span class="canvas-title">配置プレビュー</span>
       <span class="canvas-mode" id="canvas-mode-label">概要表示</span>
@@ -392,9 +421,10 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
   </div>
 
   <!-- PC CANVAS (材料発注) -->
-  <div class="canvas-panel" id="mat-canvas-panel" style="display:none;border-right-color:var(--blue);">
+  <div class="canvas-panel" id="mat-canvas-panel" style="border-right-color:var(--blue);">
     <div class="canvas-header" style="background:rgba(21,101,192,.15);">
       <span class="canvas-title">材料サイズプレビュー</span>
+      <span class="canvas-mode" id="mat-canvas-item-label" style="color:rgba(100,180,255,.9);">材料 01</span>
     </div>
     <div class="canvas-wrap" id="mat-canvas-wrap"><canvas id="mat-cv"></canvas></div>
     <div class="canvas-legend">
@@ -405,30 +435,28 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
   <!-- FORM PANEL -->
   <div class="form-panel" id="form-panel">
 
-    <!-- ════════════════════════════
-         工作依頼フォーム
-    ════════════════════════════ -->
+    <!-- 工作依頼フォーム -->
     <div id="work-form">
 
     <div class="card">
       <div class="card-header"><span class="card-title">依頼者情報</span><span class="card-num">REQUESTOR</span></div>
       <div class="card-body">
-        <div class="frow"><div class="flabel">氏名<span class="req">*</span></div><div class="finput"><input type="text" id="req-name" placeholder="山田 太郎" oninput="autoUpdate()"></div></div>
-        <div class="frow"><div class="flabel">部署</div><div class="finput"><input type="text" id="req-dept" placeholder="製造部" oninput="autoUpdate()"></div></div>
-        <div class="frow"><div class="flabel">品番/品名</div><div class="finput"><input type="text" id="req-part" placeholder="部品名称" oninput="autoUpdate()"></div></div>
-        <div class="frow"><div class="flabel">数量</div><div class="finput"><input type="number" id="req-qty" value="1" min="1" class="w-short" inputmode="numeric" oninput="autoUpdate()"><span class="unit">個</span></div></div>
-        <div class="frow"><div class="flabel">送信先 TO<span class="req">*</span></div><div class="finput"><input type="text" id="mail-to" placeholder="nc@noritsu.co.jp" inputmode="email"></div></div>
-        <div class="frow"><div class="flabel">CC</div><div class="finput"><input type="text" id="mail-cc" placeholder="cc@noritsu.co.jp" inputmode="email"></div></div>
+        <div class="frow"><div class="flabel">氏名<span class="req">*</span></div><div class="finput"><input type="text" id="req-name" placeholder="山田 太郎" oninput="autoUpdate();saveWorkState()"></div></div>
+        <div class="frow"><div class="flabel">部署</div><div class="finput"><input type="text" id="req-dept" placeholder="製造部" oninput="autoUpdate();saveWorkState()"></div></div>
+        <div class="frow"><div class="flabel">品番/品名</div><div class="finput"><input type="text" id="req-part" placeholder="部品名称" oninput="autoUpdate();saveWorkState();updateWorkSubject()"></div></div>
+        <div class="frow"><div class="flabel">数量</div><div class="finput"><input type="number" id="req-qty" value="1" min="1" class="w-short" inputmode="numeric" oninput="autoUpdate();saveWorkState()"><span class="unit">個</span></div></div>
+        <div class="frow"><div class="flabel">送信先 TO<span class="req">*</span></div><div class="finput"><input type="text" id="mail-to" placeholder="nc@noritsu.co.jp" inputmode="email" oninput="saveWorkState()"></div></div>
+        <div class="frow"><div class="flabel">CC</div><div class="finput"><input type="text" id="mail-cc" placeholder="cc@noritsu.co.jp" inputmode="email" oninput="saveWorkState()"></div></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header"><span class="card-title">ワーク寸法</span><span class="card-num">WORK DIM.</span></div>
       <div class="card-body">
-        <div class="frow"><div class="flabel">全幅 X<span class="req">*</span></div><div class="finput"><input type="number" id="wx" placeholder="100" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div>
-        <div class="frow"><div class="flabel">奥行 Y<span class="req">*</span></div><div class="finput"><input type="number" id="wy" placeholder="100" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div>
-        <div class="frow"><div class="flabel">厚さ Z<span class="req">*</span></div><div class="finput"><input type="number" id="wz" placeholder="20" min="1" inputmode="decimal" oninput="autoUpdate()"><span class="unit">mm</span></div></div>
-        <div class="frow"><div class="flabel">材質</div><div class="finput"><select id="material" onchange="autoUpdate()"><option>A5052</option><option>A6061</option><option>S45C</option><option>SUS304</option><option>C3604（真鍮）</option><option>POM白</option><option>POM黒</option><option>その他</option></select></div></div>
+        <div class="frow"><div class="flabel">全幅 X<span class="req">*</span></div><div class="finput"><input type="number" id="wx" placeholder="100" min="1" inputmode="decimal" oninput="redraw();autoUpdate();saveWorkState()"><span class="unit">mm</span></div></div>
+        <div class="frow"><div class="flabel">奥行 Y<span class="req">*</span></div><div class="finput"><input type="number" id="wy" placeholder="100" min="1" inputmode="decimal" oninput="redraw();autoUpdate();saveWorkState()"><span class="unit">mm</span></div></div>
+        <div class="frow"><div class="flabel">厚さ Z<span class="req">*</span></div><div class="finput"><input type="number" id="wz" placeholder="20" min="1" inputmode="decimal" oninput="autoUpdate();saveWorkState()"><span class="unit">mm</span></div></div>
+        <div class="frow"><div class="flabel">材質</div><div class="finput"><select id="material" onchange="autoUpdate();saveWorkState()"><option>A5052</option><option>A6061</option><option>A7075</option><option>S45C</option><option>SUS304</option><option>C3604（真鍮）</option><option>POM白</option><option>POM黒</option><option>その他</option></select></div></div>
         <div class="origin-note">📍 原点：右下(0,0)・上面Z0固定</div>
       </div>
     </div>
@@ -450,7 +478,7 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
                   <button class="grp-btn" id="gai-btn-0" onclick="selGrp(this,'gai-corner-type','0')">なし(0)</button>
                 </div><input type="hidden" id="gai-corner-type" value="">
               </div></div>
-              <div class="frow"><div class="flabel">寸法</div><div class="finput"><input type="number" id="gai-corner-val" placeholder="3" min="0" step="0.5" inputmode="decimal" class="w-short" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div>
+              <div class="frow"><div class="flabel">寸法</div><div class="finput"><input type="number" id="gai-corner-val" placeholder="3" min="0" step="0.5" inputmode="decimal" class="w-short" oninput="redraw();autoUpdate();saveWorkState()"><span class="unit">mm</span></div></div>
               <div class="frow"><div class="flabel">深さ</div><div class="finput"><span class="unit">厚さ＋0.5mm（自動設定）</span></div></div>
             </div>
           </div>
@@ -467,13 +495,17 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
     <div class="card"><div class="card-header"><span class="card-title">⑥ 穴加工</span><span class="card-num">HOLE</span></div><div class="card-body"><div class="check-grid"><label class="check-item" id="lbl-hole" onclick="toggleChk('hole')"><input type="checkbox" id="chk-hole"><div class="check-dot"></div><span>穴あり</span></label></div><div class="dyn-section" id="sec-hole"><div class="dyn-inner"><div class="dyn-header">HOLE <span class="dyn-count" id="hole-count-lbl">0個</span></div><div class="dyn-body"><div id="hole-list"></div><button class="btn-add" onclick="addHole()">＋ 穴を追加</button></div></div></div></div></div>
     <div class="card"><div class="card-header"><span class="card-title">⑦ タップ加工</span><span class="card-num">TAP</span></div><div class="card-body"><div class="check-grid"><label class="check-item" id="lbl-tap" onclick="toggleChk('tap')"><input type="checkbox" id="chk-tap"><div class="check-dot"></div><span>タップあり</span></label></div><div class="dyn-section" id="sec-tap"><div class="dyn-inner"><div class="dyn-header">TAP <span class="dyn-count" id="tap-count-lbl">0個</span></div><div class="dyn-body"><div id="tap-list"></div><button class="btn-add" onclick="addTap()">＋ タップを追加</button></div></div></div></div></div>
 
-    <div class="card"><div class="card-header"><span class="card-title">備考・特記事項</span></div><div class="card-body"><textarea id="remarks" style="width:100%;min-height:64px;resize:vertical;border:1px solid var(--gray3);border-radius:3px;padding:8px;font-family:var(--sans);" oninput="autoUpdate()"></textarea></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">備考・特記事項</span></div><div class="card-body"><textarea id="remarks" style="width:100%;min-height:64px;resize:vertical;border:1px solid var(--gray3);border-radius:3px;padding:8px;font-family:var(--sans);" oninput="autoUpdate();saveWorkState()"></textarea></div></div>
 
     <div class="card">
       <div class="card-header"><span class="card-title">送信・出力</span><span class="card-num">OUTPUT</span></div>
       <div class="card-body">
         <div id="alert-box" class="alert" style="display:none"></div>
-        <button class="btn-primary" onclick="sendMail()">✉ Outlookで送信</button>
+        <div class="sub-label" style="margin-bottom:4px">メール件名（編集可）</div>
+        <input type="text" id="work-subject" class="subject-field-red" placeholder="【工作依頼】部品名称　2026.03.30" oninput="saveWorkState()">
+        <div class="sub-label" style="margin-bottom:4px;margin-top:4px">宛名（例：○○ 様）</div>
+        <input type="text" id="work-recipient" class="recipient-field-red" placeholder="白銅　ご担当者　様" oninput="saveWorkState()">
+        <button class="btn-primary" onclick="sendMail()">✉ Gmailで送信</button>
         <button class="btn-secondary" onclick="copyText()">📋 指示書をワンクリックコピー</button>
         <button class="btn-print" onclick="doPrint()">🖨 図面＋指示書を印刷</button>
         <button class="btn-secondary" onclick="downloadPDF()" style="border-color:#e65100;color:#e65100;">📄 図面をPDFで保存</button>
@@ -484,18 +516,16 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 
     </div><!-- /work-form -->
 
-    <!-- ════════════════════════════
-         材料発注フォーム
-    ════════════════════════════ -->
+    <!-- 材料発注フォーム -->
     <div id="mat-form">
 
     <div class="card">
       <div class="card-header-blue"><span class="card-title">発注者情報</span><span class="card-num">REQUESTOR</span></div>
       <div class="card-body">
-        <div class="frow"><div class="flabel">氏名<span class="req">*</span></div><div class="finput"><input type="text" id="mat-name" placeholder="山田 太郎" oninput="matAutoUpdate()"></div></div>
-        <div class="frow"><div class="flabel">メールアドレス</div><div class="finput"><input type="text" id="mat-email" placeholder="yourname@noritsu.co.jp" inputmode="email" oninput="matAutoUpdate()"></div></div>
-        <div class="frow"><div class="flabel">送信先 TO<span class="req">*</span></div><div class="finput"><input type="text" id="mat-to" placeholder="supplier@example.com" inputmode="email"></div></div>
-        <div class="frow"><div class="flabel">CC</div><div class="finput"><input type="text" id="mat-cc" placeholder="cc@noritsu.co.jp" inputmode="email"></div></div>
+        <div class="frow"><div class="flabel">氏名<span class="req">*</span></div><div class="finput"><input type="text" id="mat-name" placeholder="山田 太郎" oninput="matAutoUpdate();saveMatState()"></div></div>
+        <div class="frow"><div class="flabel">メールアドレス</div><div class="finput"><input type="text" id="mat-email" placeholder="yourname@noritsu.co.jp" inputmode="email" oninput="matAutoUpdate();saveMatState()"></div></div>
+        <div class="frow"><div class="flabel">送信先 TO<span class="req">*</span></div><div class="finput"><input type="text" id="mat-to" placeholder="supplier@example.com" inputmode="email" oninput="saveMatState()"></div></div>
+        <div class="frow"><div class="flabel">CC</div><div class="finput"><input type="text" id="mat-cc" placeholder="cc@noritsu.co.jp" inputmode="email" oninput="saveMatState()"></div></div>
       </div>
     </div>
 
@@ -510,7 +540,7 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
     <div class="card">
       <div class="card-header-blue"><span class="card-title">備考</span></div>
       <div class="card-body">
-        <textarea id="mat-remarks" style="width:100%;min-height:56px;resize:vertical;border:1px solid var(--gray3);border-radius:3px;padding:8px;font-family:var(--sans);" placeholder="特記事項があれば入力" oninput="matAutoUpdate()"></textarea>
+        <textarea id="mat-remarks" style="width:100%;min-height:56px;resize:vertical;border:1px solid var(--gray3);border-radius:3px;padding:8px;font-family:var(--sans);" placeholder="特記事項があれば入力" oninput="matAutoUpdate();saveMatState()"></textarea>
       </div>
     </div>
 
@@ -518,11 +548,17 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
       <div class="card-header-blue"><span class="card-title">送信・出力</span><span class="card-num">OUTPUT</span></div>
       <div class="card-body">
         <div id="mat-alert-box" class="alert" style="display:none"></div>
-        <button class="btn-primary-blue" onclick="matSendMail()">✉ Outlookで送信</button>
+        <div class="sub-label" style="margin-bottom:4px">メール件名（編集可）</div>
+        <input type="text" id="mat-subject" class="subject-field" placeholder="【材料発注】2026.03.30" oninput="saveMatState()">
+        <div class="sub-label" style="margin-bottom:4px;margin-top:4px">宛名（例：○○ 様）</div>
+        <input type="text" id="mat-recipient" class="recipient-field" placeholder="〇〇さん" oninput="saveMatState()">
+        <button class="btn-primary-blue" onclick="matSendMail()">✉ Gmailで送信</button>
         <button class="btn-secondary-blue" onclick="matCopyText()">📋 発注文をコピー</button>
         <button class="btn-secondary-blue" onclick="matPrint()" style="border-color:#1565c0;color:#1565c0;">🖨 発注文を印刷</button>
-        <div class="sub-label" style="margin-top:12px">発注文プレビュー（自動更新）</div>
-        <div class="preview-box-blue" id="mat-preview-text">入力内容がここに自動表示されます。</div>
+        <div class="sub-label" style="margin-top:12px">発注文プレビュー（直接編集可・自動更新）</div>
+        <div class="preview-note">✏ 内容を直接編集できます。「再生成」ボタンで自動生成に戻せます。</div>
+        <textarea class="preview-box-blue" id="mat-preview-text" oninput="matPreviewEdited=true;saveMatState();autoResizeTextarea(this)">入力内容がここに自動表示されます。</textarea>
+        <button class="btn-secondary-blue" style="margin-top:4px;border-color:#1565c0;color:#1565c0;font-size:11px;padding:6px;" onclick="matRegenPreview()">🔄 プレビューを再生成</button>
       </div>
     </div>
 
@@ -543,11 +579,11 @@ input:disabled,select:disabled{background:var(--gray2);color:var(--gray4);cursor
 <script>
 // ── DATE ──
 const today=new Date();
-document.getElementById('header-date').textContent=
-  today.getFullYear()+'.'+String(today.getMonth()+1).padStart(2,'0')+'.'+String(today.getDate()).padStart(2,'0');
+const dateStr=today.getFullYear()+'.'+String(today.getMonth()+1).padStart(2,'0')+'.'+String(today.getDate()).padStart(2,'0');
+document.getElementById('header-date').textContent=dateStr;
 
-// ── MODE ──
-let currentMode='work';// 'work' or 'mat'
+// ── MODE ── デフォルト：材料発注（青）
+let currentMode='mat';
 
 function switchMode(mode){
   currentMode=mode;
@@ -556,25 +592,21 @@ function switchMode(mode){
   document.getElementById('mat-form').style.display=isWork?'none':'block';
   document.getElementById('btn-mode-work').classList.toggle('active',isWork);
   document.getElementById('btn-mode-mat').classList.toggle('active',!isWork);
-  // ヘッダーアクセントカラー
   const accent=isWork?'#c8281e':'#1565c0';
   document.documentElement.style.setProperty('--accent',accent);
   document.getElementById('header-title').textContent=isWork?'加工依頼フォーム':'材料発注フォーム';
   document.getElementById('logo-text').style.color=accent;
-  // PCキャンバスパネル切替（モバイルでは常にnone）
-  if(!isMobile()){
+  if(window.innerWidth>=960){
     document.getElementById('work-canvas-panel').style.display=isWork?'flex':'none';
     document.getElementById('mat-canvas-panel').style.display=isWork?'none':'flex';
   } else {
     document.getElementById('work-canvas-panel').style.display='none';
     document.getElementById('mat-canvas-panel').style.display='none';
   }
-  // モバイルキャンバスストリップ切替
-  if(isMobile()){
+  if(window.innerWidth<960){
     document.getElementById('canvas-strip').style.display=isWork?'block':'none';
     document.getElementById('mat-canvas-strip').style.display=isWork?'none':'block';
   }
-  // スクロールリセット
   document.getElementById('form-panel').scrollTop=0;
   setTimeout(()=>{
     updateFormPadding();
@@ -587,10 +619,9 @@ function switchMode(mode){
 // ── STATE ──
 let stepItems=[],cpktItems=[],epktItems=[],pktItems=[],grvItems=[],holeItems=[],tapItems=[];
 let idCounter=0,mobileCanvasOpen=true;
-const isMobile=()=>window.innerWidth<960;
-
-// 材料発注状態
-// matState は廃止（複数アイテムに移行）
+let matPreviewEdited=false;
+let matPreviewIdx=0;
+function isMobile(){return window.innerWidth<960;}
 
 // ── PWA ──
 function checkPWA(){
@@ -617,7 +648,6 @@ function setMobileStripHeight(){
 function updateFormPadding(){
   if(!isMobile())return;
   const header=document.querySelector('header');
-  // アクティブなストリップを使う
   const stripId=currentMode==='mat'?'mat-canvas-strip':'canvas-strip';
   const strip=document.getElementById(stripId);
   if(!header||!strip)return;
@@ -627,17 +657,14 @@ function updateFormPadding(){
 }
 function resizeCanvas(){
   if(!isMobile()){
-    // 工作依頼キャンバス
     const wrap=document.getElementById('canvas-wrap');
     const canvas=document.getElementById('cv');
     if(wrap&&wrap.clientWidth&&wrap.clientHeight){canvas.width=wrap.clientWidth;canvas.height=wrap.clientHeight;}
-    // 材料発注キャンバス
     const mwrap=document.getElementById('mat-canvas-wrap');
     const mcanvas=document.getElementById('mat-cv');
     if(mwrap&&mwrap.clientWidth&&mwrap.clientHeight){mcanvas.width=mwrap.clientWidth;mcanvas.height=mwrap.clientHeight;}
     return;
   }
-  // モバイル：アクティブなストリップのみ
   if(mobileCanvasOpen){
     const isWork=currentMode==='work';
     const stripId=isWork?'canvas-strip':'mat-canvas-strip';
@@ -664,25 +691,53 @@ function drawAllCanvas(){
   if(isMobile()&&mobileCanvasOpen&&currentMode==='mat')drawMatPreview();
 }
 function redraw(){resizeCanvas();drawAllCanvas();}
-function autoUpdate(){document.getElementById('preview-text').textContent=generateText();}
+function autoUpdate(){
+  document.getElementById('preview-text').textContent=generateText();
+  updateWorkSubject();
+}
 
-// 材料発注専用プレビュー描画（wx/wyとは完全分離）
+// ── 工作依頼 件名自動更新 ──
+function updateWorkSubject(){
+  const subEl=document.getElementById('work-subject');
+  if(!subEl)return;
+  const part=document.getElementById('req-part')?.value||'工作依頼';
+  subEl.value='【工作依頼】'+part+'　'+dateStr;
+}
+
+// ── textareaを内容に合わせて自動リサイズ ──
+function autoResizeTextarea(el){
+  if(!el)return;
+  el.style.height='auto';
+  el.style.height=(el.scrollHeight+2)+'px';
+}
+
+// ── 材料発注 プレビュー再生成 ──
+function matRegenPreview(){
+  matPreviewEdited=false;
+  const el=document.getElementById('mat-preview-text');
+  el.value=generateMatText();
+  autoResizeTextarea(el);
+  saveMatState();
+}
+
+// ══ 材料発注プレビューキャンバス ══
 function drawMatPreview(){
-  // PCとモバイル両方に描画
   const targets=isMobile()
     ?[document.getElementById('mat-cv-mobile')]
     :[document.getElementById('mat-cv')];
+  const labelEl=document.getElementById('mat-canvas-item-label');
+  if(labelEl&&matItems.length>0){
+    labelEl.textContent='材料 '+String(matPreviewIdx+1).padStart(2,'0');
+  }
   targets.forEach(canvas=>{
     if(!canvas)return;
     const ctx=canvas.getContext('2d');
     const W=canvas.width,H=canvas.height;
     if(!W||!H)return;
     ctx.clearRect(0,0,W,H);
-    // グリッド
     ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=.5;
     for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
     for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-    // 材料発注フォームの入力値を参照（最初のアイテムのW×H）
     const ms=getMatPreviewSize();
     const mw=ms.w,mh=ms.h,mt=ms.t;
     if(!mw||!mh){
@@ -696,23 +751,33 @@ function drawMatPreview(){
     const scale=Math.min(availW/mw,availH/mh);
     const drawW=mw*scale,drawH=mh*scale;
     const startX=(W-drawW)/2,startY=(H-drawH)/2;
-    // 外形描画（青系）
     ctx.beginPath();ctx.rect(startX,startY,drawW,drawH);
     ctx.fillStyle='rgba(21,101,192,.15)';ctx.fill();
     ctx.strokeStyle='rgba(100,180,255,.9)';ctx.lineWidth=2;ctx.stroke();
-    // 寸法ラベル
     ctx.fillStyle='rgba(150,210,255,.8)';ctx.font='11px monospace';
     ctx.textAlign='center';ctx.textBaseline='top';
     ctx.fillText('W:'+mw+'mm',startX+drawW/2,startY+drawH+6);
     ctx.save();ctx.translate(startX-8,startY+drawH/2);ctx.rotate(-Math.PI/2);
     ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('H:'+mh+'mm',0,0);ctx.restore();
-    // 厚さ表示
     if(mt){
       ctx.fillStyle='rgba(150,210,255,.6)';ctx.font='10px monospace';
       ctx.textAlign='right';ctx.textBaseline='top';
       ctx.fillText('T:'+mt+'mm',startX+drawW-4,startY+4);
     }
+    if(matItems.length>1){
+      ctx.fillStyle='rgba(100,180,255,.7)';ctx.font='10px monospace';
+      ctx.textAlign='left';ctx.textBaseline='top';
+      ctx.fillText('材料'+(matPreviewIdx+1)+'/'+matItems.length,startX+4,startY+4);
+    }
   });
+}
+
+function getMatPreviewSize(){
+  if(matItems.length>matPreviewIdx){
+    const item=matItems[matPreviewIdx];
+    return{w:parseFloat(item.w)||0,h:parseFloat(item.h)||0,t:parseFloat(item.t)||0};
+  }
+  return{w:0,h:0,t:0};
 }
 
 // ══ 設定（localStorage） ══
@@ -726,14 +791,12 @@ function loadSettings(){
   applySettingsToForm();
 }
 function applySettingsToForm(){
-  // 工作依頼
   if(cfg.senderName&&!document.getElementById('req-name').value)
     document.getElementById('req-name').value=cfg.senderName;
   if(cfg.workTo&&!document.getElementById('mail-to').value)
     document.getElementById('mail-to').value=cfg.workTo;
   if(cfg.workCc&&!document.getElementById('mail-cc').value)
     document.getElementById('mail-cc').value=cfg.workCc;
-  // 材料発注
   if(cfg.senderName&&!document.getElementById('mat-name').value)
     document.getElementById('mat-name').value=cfg.senderName;
   if(cfg.senderEmail&&!document.getElementById('mat-email').value)
@@ -782,55 +845,169 @@ function saveSettings(){
   cfg.senderEmail=document.getElementById('cfg-sender-email').value.trim();
   cfg.workTo=document.getElementById('cfg-work-to').value.trim();
   cfg.workCc=document.getElementById('cfg-work-cc').value.trim();
-  // 空行を除去
-  cfg.suppliers=cfg.suppliers.filter(s=>s.trim());
+  cfg.suppliers=cfg.suppliers.filter(s=>(typeof s==='string'?s:s||'').trim());
   cfg.keihis=cfg.keihis.filter(k=>k.trim());
   localStorage.setItem('noritsu_cfg',JSON.stringify(cfg));
   applySettingsToForm();
   closeSettings();
-  renderMatItems();// 発注先・経費Noドロップダウンを更新
+  renderMatItems();
   const box=document.getElementById('mat-alert-box');
   if(box){box.textContent='✓ 設定を保存しました。';box.className='alert success';box.style.display='block';setTimeout(()=>{box.style.display='none';},3000);}
 }
 
+// ══ 工作依頼 状態保存・復元 ══
+function saveWorkState(){
+  try{
+    const state={
+      name:document.getElementById('req-name').value,
+      dept:document.getElementById('req-dept').value,
+      part:document.getElementById('req-part').value,
+      qty:document.getElementById('req-qty').value,
+      mailTo:document.getElementById('mail-to').value,
+      mailCc:document.getElementById('mail-cc').value,
+      wx:document.getElementById('wx').value,
+      wy:document.getElementById('wy').value,
+      wz:document.getElementById('wz').value,
+      material:document.getElementById('material').value,
+      remarks:document.getElementById('remarks').value,
+      subject:document.getElementById('work-subject')?.value||'',
+      recipient:document.getElementById('work-recipient')?.value||'',
+      chkMen:document.getElementById('chk-men').checked,
+      chkGai:document.getElementById('chk-gai').checked,
+      gaiCornerType:document.getElementById('gai-corner-type').value,
+      gaiCornerVal:document.getElementById('gai-corner-val').value,
+    };
+    localStorage.setItem('noritsu_work_state',JSON.stringify(state));
+  }catch(e){}
+}
+
+function restoreWorkState(){
+  try{
+    const s=localStorage.getItem('noritsu_work_state');
+    if(!s)return;
+    const st=JSON.parse(s);
+    if(st.name)document.getElementById('req-name').value=st.name;
+    if(st.dept)document.getElementById('req-dept').value=st.dept;
+    if(st.part)document.getElementById('req-part').value=st.part;
+    if(st.qty)document.getElementById('req-qty').value=st.qty;
+    if(st.mailTo)document.getElementById('mail-to').value=st.mailTo;
+    if(st.mailCc)document.getElementById('mail-cc').value=st.mailCc;
+    if(st.wx)document.getElementById('wx').value=st.wx;
+    if(st.wy)document.getElementById('wy').value=st.wy;
+    if(st.wz)document.getElementById('wz').value=st.wz;
+    if(st.material){
+      const sel=document.getElementById('material');
+      for(let i=0;i<sel.options.length;i++){
+        if(sel.options[i].value===st.material){sel.selectedIndex=i;break;}
+      }
+    }
+    if(st.remarks)document.getElementById('remarks').value=st.remarks;
+    if(st.subject)document.getElementById('work-subject').value=st.subject;
+    if(st.recipient)document.getElementById('work-recipient').value=st.recipient;
+    if(st.chkMen){document.getElementById('chk-men').checked=true;document.getElementById('lbl-men').classList.add('checked');}
+    if(st.chkGai){
+      document.getElementById('chk-gai').checked=true;
+      document.getElementById('lbl-gai').classList.add('checked');
+      document.getElementById('sec-gai').classList.add('active');
+    }
+    if(st.gaiCornerType){
+      document.getElementById('gai-corner-type').value=st.gaiCornerType;
+      const btnId='gai-btn-'+st.gaiCornerType;
+      const btn=document.getElementById(btnId);
+      if(btn){btn.classList.add('active');}
+    }
+    if(st.gaiCornerVal)document.getElementById('gai-corner-val').value=st.gaiCornerVal;
+    updateGaiCornerState();
+  }catch(e){}
+}
+
+// ══ 材料発注 状態保存・復元 ══
+function saveMatState(){
+  try{
+    const previewEl=document.getElementById('mat-preview-text');
+    const state={
+      name:document.getElementById('mat-name').value,
+      email:document.getElementById('mat-email').value,
+      to:document.getElementById('mat-to').value,
+      cc:document.getElementById('mat-cc').value,
+      remarks:document.getElementById('mat-remarks').value,
+      subject:document.getElementById('mat-subject')?.value||'',
+      recipient:document.getElementById('mat-recipient')?.value||'',
+      items:matItems,
+      previewText:matPreviewEdited&&previewEl?previewEl.value:'',
+      previewEdited:matPreviewEdited,
+      previewIdx:matPreviewIdx,
+    };
+    localStorage.setItem('noritsu_mat_state',JSON.stringify(state));
+  }catch(e){}
+}
+
+function restoreMatState(){
+  try{
+    const s=localStorage.getItem('noritsu_mat_state');
+    if(!s)return false;
+    const st=JSON.parse(s);
+    if(st.name)document.getElementById('mat-name').value=st.name;
+    if(st.email)document.getElementById('mat-email').value=st.email;
+    if(st.to)document.getElementById('mat-to').value=st.to;
+    if(st.cc)document.getElementById('mat-cc').value=st.cc;
+    if(st.remarks)document.getElementById('mat-remarks').value=st.remarks;
+    if(st.subject)document.getElementById('mat-subject').value=st.subject;
+    if(st.recipient)document.getElementById('mat-recipient').value=st.recipient;
+    if(st.items&&st.items.length>0){
+      matItems=st.items;
+      matItems.forEach(it=>{if(it.id>matItemCounter)matItemCounter=it.id;});
+      renderMatItems();
+    }
+    if(st.previewIdx!==undefined)matPreviewIdx=st.previewIdx;
+    if(st.previewEdited&&st.previewText){
+      matPreviewEdited=true;
+      setTimeout(()=>{
+        const el=document.getElementById('mat-preview-text');
+        if(el){el.value=st.previewText;autoResizeTextarea(el);}
+      },100);
+    }
+    return true;
+  }catch(e){return false;}
+}
+
 // ══ 複数材料アイテム ══
 let matItemCounter=0;
-let matItems=[];// [{id, matCat, matItem, pomGrade, cut, t, w, h, qty, supplierIdx}]
+let matItems=[];
 
 function addMatItem(){
   const id=++matItemCounter;
-  matItems.push({id,matCat:'',matItem:'',pomGrade:'',cut:'',t:'',w:'',h:'',qty:1,supplierIdx:-1,supplierCustom:'',keihiIdx:-1,keihiCustom:''});
+  const defaultSupplierIdx=cfg.suppliers.length>0?0:-1;
+  const defaultKeihiIdx=cfg.keihis.length>0?0:-1;
+  matItems.push({id,matCat:'',matItem:'',pomGrade:'',cut:'',t:'',w:'',h:'',qty:1,supplierIdx:defaultSupplierIdx,supplierCustom:'',keihiIdx:defaultKeihiIdx,keihiCustom:''});
   renderMatItems();
+  matPreviewIdx=matItems.length-1;
+  drawMatPreview();
   matAutoUpdate();
+  saveMatState();
 }
 function removeMatItem(id){
   matItems=matItems.filter(it=>it.id!==id);
+  if(matPreviewIdx>=matItems.length)matPreviewIdx=Math.max(0,matItems.length-1);
   renderMatItems();
+  drawMatPreview();
   matAutoUpdate();
-}
-function refreshSupplierSelect(sel){
-  const currentVal=sel.value;
-  sel.innerHTML='<option value="-1">発注先を選択</option>';
-  cfg.suppliers.forEach((s,i)=>{
-    const opt=document.createElement('option');opt.value=i;opt.textContent=s.name||'（名称未設定）';sel.appendChild(opt);
-  });
-  sel.innerHTML+='<option value="custom">手入力する</option>';
-  if(currentVal!==null)sel.value=currentVal;
+  saveMatState();
 }
 
 function renderMatItems(){
   const list=document.getElementById('mat-items-list');
   list.innerHTML='';
   matItems.forEach((item,idx)=>{
-    const div=document.createElement('div');div.className='mat-item-card';div.id='mitem-'+item.id;
+    const div=document.createElement('div');
+    div.className='mat-item-card'+(idx===matPreviewIdx?' preview-target':'');
+    div.id='mitem-'+item.id;
     const cats=['aluminum','resin','brass','sus','iron','other'];
     const catLabels={aluminum:'アルミ',resin:'樹脂',brass:'真鍮',sus:'ステンレス',iron:'鉄',other:'その他'};
     const catBtns=cats.map(c=>`<button class="cut-btn${item.matCat===c?' active':''}" onclick="setItemCat(${item.id},'${c}',this)">${catLabels[c]}</button>`).join('');
-
-    // 材質サブ選択HTML
     let subHtml='';
     const matLists={
-      aluminum:['A5052','A6063'],
+      aluminum:['A5052','A6061','A7075','A6063'],
       brass:['C3604','C3605'],
       sus:['SUS304','SUS316'],
       iron:['S45C','S50C','S55C','SS41'],
@@ -844,131 +1021,130 @@ function renderMatItems(){
         subHtml+=`<div style="margin-top:8px"><div class="sub-label">POM グレード</div><div class="btn-group"><button class="cut-btn${item.pomGrade==='スーパー'?' active':''}" onclick="setItemPom(${item.id},'スーパー',this)">スーパー</button><button class="cut-btn${item.pomGrade==='ノーマル'?' active':''}" onclick="setItemPom(${item.id},'ノーマル',this)">ノーマル</button></div></div>`;
       }
     }else if(item.matCat==='other'){
-      subHtml=`<input type="text" value="${item.matItem||''}" placeholder="材質名を入力" style="width:100%;margin-top:8px" oninput="matItems[${idx}].matItem=this.value;matAutoUpdate()">`;
+      subHtml=`<input type="text" value="${item.matItem||''}" placeholder="材質名を入力" style="width:100%;margin-top:8px" oninput="matItems[${idx}].matItem=this.value;matAutoUpdate();saveMatState()">`;
     }
-
-    // 発注先セレクト（独立）
-    const supplierOpts=cfg.suppliers.map((s,i)=>`<option value="${i}"${item.supplierIdx===i?' selected':''}>${s}</option>`).join('');
+    const supplierOpts=cfg.suppliers.map((s,i)=>`<option value="${i}"${item.supplierIdx===i?' selected':''}>${typeof s==='string'?s:(s||'')}</option>`).join('');
     const supplierSel=`<select class="mat-supplier-sel" style="width:100%;margin-bottom:8px" onchange="setItemSupplier(${item.id},this)"><option value="-1"${item.supplierIdx===-1?' selected':''}>発注先を選択</option>${supplierOpts}<option value="custom"${item.supplierIdx==='custom'?' selected':''}>手入力する</option></select>`;
     const supplierCustom=item.supplierIdx==='custom'?`<input type="text" value="${item.supplierCustom||''}" placeholder="業者名を入力" style="width:100%;margin-bottom:8px" oninput="setItemSupplierCustom(${item.id},this.value)">`:'' ;
-    // 経費No.セレクト（独立）
     const keihiOpts=cfg.keihis.map((k,i)=>`<option value="${i}"${item.keihiIdx===i?' selected':''}>${k}</option>`).join('');
     const keihiSel=`<select class="mat-keihi-sel" style="width:100%" onchange="setItemKeihi(${item.id},this)"><option value="-1"${item.keihiIdx===-1?' selected':''}>経費Noを選択</option>${keihiOpts}<option value="custom"${item.keihiIdx==='custom'?' selected':''}>手入力する</option></select>`;
     const keihiCustom=item.keihiIdx==='custom'?`<input type="text" value="${item.keihiCustom||''}" placeholder="経費Noを入力" style="width:100%;margin-top:6px" oninput="setItemKeihiCustom(${item.id},this.value)">`:'';
-
+    const previewBtnStyle=idx===matPreviewIdx?'background:var(--blue);color:#fff;border-color:var(--blue);':'';
+    const previewBtn=matItems.length>1?`<button style="background:none;border:1px solid var(--blue);color:var(--blue);font-size:11px;padding:3px 10px;border-radius:3px;cursor:pointer;min-height:28px;${previewBtnStyle}" onclick="setPreviewIdx(${idx})">📐 図面表示</button>`:'';
     div.innerHTML=`
       <div class="mat-item-header">
         <span class="mat-item-tag">材料 ${String(idx+1).padStart(2,'0')}</span>
-        <button class="mat-item-del" onclick="removeMatItem(${item.id})">この項目を削除</button>
+        ${previewBtn}
+        <button class="mat-item-del" onclick="removeMatItem(${item.id})">削除</button>
       </div>
       <div class="sub-label">材料カテゴリ</div>
       <div class="btn-group" style="margin-bottom:8px">${catBtns}</div>
       ${subHtml}
       <div class="sub-label" style="margin-top:12px">サイズ・カット</div>
-      <div class="frow" style="margin-top:6px"><div class="flabel">厚さ T</div><div class="finput"><input type="number" value="${item.t||''}" placeholder="10" min="0.1" step="0.1" inputmode="decimal" oninput="matItems[${idx}].t=this.value;matAutoUpdate()"><span class="unit">mm</span></div></div>
-      <div class="frow"><div class="flabel">横巾 W</div><div class="finput"><input type="number" value="${item.w||''}" placeholder="100" min="1" inputmode="decimal" oninput="matItems[${idx}].w=this.value;matAutoUpdate()"><span class="unit">mm</span></div></div>
-      <div class="frow"><div class="flabel">縦巾 H</div><div class="finput"><input type="number" value="${item.h||''}" placeholder="50" min="1" inputmode="decimal" oninput="matItems[${idx}].h=this.value;matAutoUpdate()"><span class="unit">mm</span></div></div>
-      <div class="frow"><div class="flabel">数量</div><div class="finput"><input type="number" value="${item.qty||1}" min="1" class="w-short" inputmode="numeric" oninput="matItems[${idx}].qty=this.value;matAutoUpdate()"><span class="unit">個</span></div></div>
+      <div class="frow" style="margin-top:6px"><div class="flabel">厚さ T</div><div class="finput"><input type="number" value="${item.t||''}" placeholder="10" min="0.1" step="0.1" inputmode="decimal" oninput="matItems[${idx}].t=this.value;matAutoUpdate();saveMatState();if(${idx}===matPreviewIdx)drawMatPreview();"><span class="unit">mm</span></div></div>
+      <div class="frow"><div class="flabel">横巾 W</div><div class="finput"><input type="number" value="${item.w||''}" placeholder="100" min="1" inputmode="decimal" oninput="matItems[${idx}].w=this.value;matAutoUpdate();saveMatState();if(${idx}===matPreviewIdx)drawMatPreview();"><span class="unit">mm</span></div></div>
+      <div class="frow"><div class="flabel">縦巾 H</div><div class="finput"><input type="number" value="${item.h||''}" placeholder="50" min="1" inputmode="decimal" oninput="matItems[${idx}].h=this.value;matAutoUpdate();saveMatState();if(${idx}===matPreviewIdx)drawMatPreview();"><span class="unit">mm</span></div></div>
+      <div class="frow"><div class="flabel">数量</div><div class="finput"><input type="number" value="${item.qty||1}" min="1" class="w-short" inputmode="numeric" oninput="matItems[${idx}].qty=this.value;matAutoUpdate();saveMatState()"><span class="unit">個</span></div></div>
       <div class="btn-group" style="margin:8px 0">${['カッター切り','ファインカット','6面フライス仕上げ'].map(c=>`<button class="cut-btn${item.cut===c?' active':''}" onclick="setItemCut(${item.id},'${c}',this)">${c==='6面フライス仕上げ'?'6面フライス':c}</button>`).join('')}</div>
       <div class="sub-label">発注先・経費No.</div>
       ${supplierSel}${supplierCustom}
       ${keihiSel}${keihiCustom}`;
     list.appendChild(div);
-    // mat-w/mat-h用に最初のアイテムのW/Hをプレビューに反映
-    if(idx===0){
-      const wEl=div.querySelector('input[placeholder="100"]');
-      const hEl=div.querySelector('input[placeholder="50"]');
-      if(wEl)wEl.addEventListener('input',()=>drawMatPreview());
-      if(hEl)hEl.addEventListener('input',()=>drawMatPreview());
-    }
   });
 }
+
+function setPreviewIdx(idx){
+  matPreviewIdx=idx;
+  renderMatItems();
+  drawMatPreview();
+}
+
 function setItemCat(id,cat,btn){
   const item=matItems.find(it=>it.id===id);if(!item)return;
   item.matCat=cat;item.matItem='';item.pomGrade='';
-  renderMatItems();matAutoUpdate();
+  renderMatItems();matAutoUpdate();saveMatState();
 }
 function setItemMat(id,mat,label){
   const item=matItems.find(it=>it.id===id);if(!item)return;
   item.matItem=mat;item.pomGrade='';
-  renderMatItems();matAutoUpdate();
+  renderMatItems();matAutoUpdate();saveMatState();
 }
 function setItemPom(id,grade,btn){
   const item=matItems.find(it=>it.id===id);if(!item)return;
-  item.pomGrade=grade;renderMatItems();matAutoUpdate();
+  item.pomGrade=grade;renderMatItems();matAutoUpdate();saveMatState();
 }
 function setItemCut(id,cut,btn){
   const item=matItems.find(it=>it.id===id);if(!item)return;
-  item.cut=cut;renderMatItems();matAutoUpdate();
+  item.cut=cut;renderMatItems();matAutoUpdate();saveMatState();
 }
 function setItemSupplier(id,sel){
   const item=matItems.find(it=>it.id===id);if(!item)return;
   const val=sel.value;
   item.supplierIdx=val==='custom'?'custom':parseInt(val);
-  renderMatItems();matAutoUpdate();
+  renderMatItems();matAutoUpdate();saveMatState();
 }
 function setItemSupplierCustom(id,val){
   const item=matItems.find(it=>it.id===id);if(!item)return;
-  item.supplierCustom=val;matAutoUpdate();
+  item.supplierCustom=val;matAutoUpdate();saveMatState();
 }
 
-// アイテムの表示用材質名
 function getItemMatName(item){
   let name=item.matItem||'';
   if(name.startsWith('POM')&&item.pomGrade){
     const color=name.replace('POM','');name=`POM${item.pomGrade}${color}`;
   }
-  return name;
+  return name?`＜${name}＞`:'';
 }
-// アイテムの寸法文字列
+
+// ══ 寸法表記：T×W×H（×のみ使用）══
 function getItemDim(item){
   const t=item.t||'';const w=item.w||'';const h=item.h||'';
   if(!t||!w||!h)return'';
-  return item.cut==='6面フライス仕上げ'?`${t}*${w}*${h}`:`T${t}×${w}×${h}`;
+  // 6面フライスは T×W×H、それ以外も同様に×で統一
+  return `${t}×${w}×${h}`;
 }
-// アイテムの発注先名
+
 function getItemSupplierName(item){
   if(item.supplierIdx==='custom')return item.supplierCustom||'';
-  if(item.supplierIdx>=0&&cfg.suppliers[item.supplierIdx])return cfg.suppliers[item.supplierIdx].name||'';
+  if(item.supplierIdx>=0&&cfg.suppliers[item.supplierIdx]){
+    const s=cfg.suppliers[item.supplierIdx];
+    return typeof s==='string'?s:(s||'');
+  }
   return '';
 }
 function setItemKeihi(id,sel){
   const item=matItems.find(it=>it.id===id);if(!item)return;
   const val=sel.value;item.keihiIdx=val==='custom'?'custom':parseInt(val);
-  renderMatItems();matAutoUpdate();
+  renderMatItems();matAutoUpdate();saveMatState();
 }
 function setItemKeihiCustom(id,val){
   const item=matItems.find(it=>it.id===id);if(!item)return;
-  item.keihiCustom=val;matAutoUpdate();
+  item.keihiCustom=val;matAutoUpdate();saveMatState();
 }
-// アイテムの経費No
 function getItemKeihi(item){
   if(item.keihiIdx==='custom')return item.keihiCustom||'';
   if(item.keihiIdx>=0&&cfg.keihis[item.keihiIdx])return cfg.keihis[item.keihiIdx]||'';
   return '';
 }
 
-// 材料プレビュー描画（最初のアイテムのW×Hを使用）
-function getMatPreviewSize(){
-  if(matItems.length>0){
-    return{w:parseFloat(matItems[0].w)||0,h:parseFloat(matItems[0].h)||0,t:parseFloat(matItems[0].t)||0};
-  }
-  return{w:0,h:0,t:0};
-}
-
 function matAutoUpdate(){
+  if(!matPreviewEdited){
+    const el=document.getElementById('mat-preview-text');
+    if(el){el.value=generateMatText();autoResizeTextarea(el);}
+  }
   drawMatPreview();
-  document.getElementById('mat-preview-text').textContent=generateMatText();
 }
 
+// ══ 発注文生成（フォーマット統一） ══
 function generateMatText(){
   const senderName=document.getElementById('mat-name').value||'（氏名未入力）';
   const senderEmail=document.getElementById('mat-email').value||'';
   const remarks=document.getElementById('mat-remarks').value;
-  if(matItems.length===0){
-    return '材料を追加してください。';
-  }
-  // 発注先ごとにグループ化
+  const recipient=document.getElementById('mat-recipient')?.value||'';
+
+  if(matItems.length===0){return '材料を追加してください。';}
+
+  // 発注先＋経費Noでグループ化
   const groups={};
   matItems.forEach(item=>{
     const supplier=getItemSupplierName(item)||'（発注先未選択）';
@@ -977,29 +1153,72 @@ function generateMatText(){
     if(!groups[key])groups[key]={supplier,keihi,items:[]};
     groups[key].items.push(item);
   });
-  let t='お疲れ様です。\n材料の手配をお願いいたします。\n\n';
+
+  let t='';
+
   Object.values(groups).forEach(grp=>{
-    t+=`経費No.${grp.keihi}\n\n`;
+    // 宛名（社内購買チーム担当者名）
+    if(recipient){
+      t+=`${recipient}\n\n`;
+    }
+
+    t+='材料の手配お願いいたします。\n\n';
+
+    // 経費
+    t+=`経費\n`;
+    t+=`${grp.keihi}\n\n`;
+
+    // 発注先名
     t+=`${grp.supplier}\n`;
+
+    // 材質ごとにまとめて出力
+    const matGroups={};
     grp.items.forEach(item=>{
       const matName=getItemMatName(item)||'（材質未選択）';
-      const dim=getItemDim(item)||'（寸法未入力）';
-      const cut=item.cut||'（カット未選択）';
-      const qty=item.qty||1;
-      const matLine=matName.startsWith('POM')?`＜${matName}＞`:matName;
-      t+=`${matLine}\n${dim}　${cut}　${qty}個\n`;
+      if(!matGroups[matName])matGroups[matName]=[];
+      matGroups[matName].push(item);
     });
+
+    Object.entries(matGroups).forEach(([matName,items])=>{
+      t+=`${matName}\n`;
+      items.forEach(item=>{
+        const dim=getItemDim(item)||'（寸法未入力）';
+        const cut=item.cut||'（カット未選択）';
+        const qty=item.qty||1;
+        // 寸法（厚み×縦巾×横巾）　カット種類　個数
+        t+=`${dim}　${cut}　${qty}個\n`;
+      });
+    });
+
     t+='\n';
+    t+='希望納期　最短\n\n';
+
+    // 備考
+    if(remarks){
+      t+=`${remarks}\n\n`;
+    }
+
+    t+='以上、よろしくお願いいたします。\n\n';
   });
-  t+='希望納期　最短\n\n';
-  if(remarks)t+=`${remarks}\n\n`;
-  t+='以上、よろしくお願いいたします。\n\n';
+
+  // 署名
   t+='********************************************\n';
   t+='ノーリツプレシジョン株式会社\n製造部 製造課 工作チーム\n';
   t+=senderEmail?`${senderName} <${senderEmail}>\n`:`${senderName}\n`;
   t+='TEL：073-454-0450　FAX：073-454-0320\n';
   t+='********************************************\n';
+
   return t;
+}
+
+function getMatSubject(){
+  const subEl=document.getElementById('mat-subject');
+  if(subEl&&subEl.value)return subEl.value;
+  return '【材料発注】'+dateStr;
+}
+function updateMatSubject(){
+  const subEl=document.getElementById('mat-subject');
+  if(subEl&&!subEl.value)subEl.value='【材料発注】'+dateStr;
 }
 
 function matValidate(){
@@ -1009,17 +1228,20 @@ function matValidate(){
   if(matItems.length===0){box.textContent='材料を1件以上追加してください。';box.className='alert error-blue';box.style.display='block';return false;}
   box.style.display='none';return true;
 }
+
 function matSendMail(){
   if(!matValidate())return;
   const to=document.getElementById('mat-to').value;
   const cc=document.getElementById('mat-cc').value;
-  const dateStr=document.getElementById('header-date').textContent;
-  const subject=`【材料発注】${dateStr}`;
+  const subject=getMatSubject();
+  const body=document.getElementById('mat-preview-text').value||generateMatText();
   const ccPart=cc?`&cc=${encodeURIComponent(cc)}`:'';
-  window.location.href=`mailto:${to}${ccPart}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(generateMatText())}`;
+  const gmailUrl=`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}${ccPart}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(gmailUrl,'_blank');
 }
+
 function matCopyText(){
-  const text=generateMatText();
+  const text=document.getElementById('mat-preview-text').value||generateMatText();
   const box=document.getElementById('mat-alert-box');
   navigator.clipboard.writeText(text).then(()=>{box.textContent='✓ 発注文をコピーしました。';box.className='alert success';box.style.display='block';setTimeout(()=>{box.style.display='none';},4000);}).catch(()=>{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');box.textContent='✓ コピーしました。';box.className='alert success';box.style.display='block';setTimeout(()=>{box.style.display='none';},3000);}catch(e){}document.body.removeChild(ta);});
 }
@@ -1040,7 +1262,7 @@ function toggleChk(type){
       if(type==='tap'&&tapItems.length===0)addTap();
     }else{lbl.classList.remove('checked');if(sec)sec.classList.remove('active');}
     if(type==='gai')updateGaiCornerState();
-    redraw();autoUpdate();
+    redraw();autoUpdate();saveWorkState();
   },10);
 }
 function updateGaiCornerState(){
@@ -1049,7 +1271,7 @@ function updateGaiCornerState(){
   const v=document.getElementById('gai-corner-val');if(v)v.disabled=!on;
   if(!on){document.getElementById('gai-corner-type').value='';['gai-btn-R','gai-btn-C','gai-btn-0'].forEach(id=>{document.getElementById(id)?.classList.remove('active');});}
 }
-function selGrp(btn,hid,val){btn.closest('.btn-group').querySelectorAll('.grp-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById(hid).value=val;redraw();autoUpdate();}
+function selGrp(btn,hid,val){btn.closest('.btn-group').querySelectorAll('.grp-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById(hid).value=val;redraw();autoUpdate();saveWorkState();}
 function mkId(){return++idCounter;}
 
 // ══ CANVAS ══
@@ -1081,7 +1303,7 @@ function drawCanvas(canvas){
 }
 
 // ══ ADD ITEMS ══
-function addStep(){const id=mkId();stepItems.push(id);const n=stepItems.length;const div=document.createElement('div');div.className='item-card';div.id='step-'+id;div.innerHTML=`<div class="item-header"><span class="item-tag">STEP-${String(n).padStart(2,'0')}</span><button class="btn-remove" onclick="removeItem('step',${id})">この項目を削除</button><button class="btn-remove-all" onclick="removeAllItems('step')">全て削除</button></div><div class="frow"><div class="flabel">加工辺<span class="req">*</span></div><div class="finput"><select id="step-side-${id}" onchange="redraw();autoUpdate()"><option value="">選択</option><option value="right">右辺</option><option value="left">左辺</option><option value="top">上辺</option><option value="bottom">下辺</option></select></div></div><div class="frow"><div class="flabel">巾 A<span class="req">*</span></div><div class="finput"><input type="number" id="step-a-${id}" placeholder="20" min="0.1" step="0.1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">深さ<span class="req">*</span></div><div class="finput"><input type="number" id="step-z-${id}" placeholder="5" min="0.1" step="0.1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div>`;document.getElementById('step-list').appendChild(div);document.getElementById('step-count-lbl').textContent=stepItems.length+'箇所';redraw();autoUpdate();}
+function addStep(){const id=mkId();stepItems.push(id);const n=stepItems.length;const div=document.createElement('div');div.className='item-card';div.id='step-'+id;div.innerHTML=`<div class="item-header"><span class="item-tag">STEP-${String(n).padStart(2,'0')}</span><button class="btn-remove" onclick="removeItem('step',${id})">この項目を削除</button><button class="btn-remove-all" onclick="removeAllItems('step')">全て削除</button></div><div class="frow"><div class="flabel">加工辺<span class="req">*</span></div><div class="finput"><select id="step-side-${id}" onchange="redraw();autoUpdate();saveWorkState()"><option value="">選択</option><option value="right">右辺</option><option value="left">左辺</option><option value="top">上辺</option><option value="bottom">下辺</option></select></div></div><div class="frow"><div class="flabel">巾 A<span class="req">*</span></div><div class="finput"><input type="number" id="step-a-${id}" placeholder="20" min="0.1" step="0.1" inputmode="decimal" oninput="redraw();autoUpdate();saveWorkState()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">深さ<span class="req">*</span></div><div class="finput"><input type="number" id="step-z-${id}" placeholder="5" min="0.1" step="0.1" inputmode="decimal" oninput="redraw();autoUpdate();saveWorkState()"><span class="unit">mm</span></div></div>`;document.getElementById('step-list').appendChild(div);document.getElementById('step-count-lbl').textContent=stepItems.length+'箇所';redraw();autoUpdate();}
 function addCpkt(){const id=mkId();cpktItems.push(id);const n=cpktItems.length;const div=document.createElement('div');div.className='item-card';div.id='cpkt-'+id;div.innerHTML=`<div class="item-header"><span class="item-tag">CPKT-${String(n).padStart(2,'0')}</span><span class="item-note">※参考入力</span><button class="btn-remove" onclick="removeItem('cpkt',${id})">この項目を削除</button><button class="btn-remove-all" onclick="removeAllItems('cpkt')">全て削除</button></div><div class="frow"><div class="flabel">角<span class="req">*</span></div><div class="finput"><select id="cpkt-corner-${id}" onchange="redraw();autoUpdate()"><option value="">選択</option><option value="rb">右下</option><option value="rt">右上</option><option value="lb">左下</option><option value="lt">左上</option></select></div></div><div class="frow"><div class="flabel">巾 A（X）<span class="req">*</span></div><div class="finput"><input type="number" id="cpkt-a-${id}" placeholder="30" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">巾 B（Y）<span class="req">*</span></div><div class="finput"><input type="number" id="cpkt-b-${id}" placeholder="20" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">コーナー R</div><div class="finput"><input type="number" id="cpkt-r-${id}" placeholder="5" min="0" step="0.5" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">深さ<span class="req">*</span></div><div class="finput"><input type="number" id="cpkt-z-${id}" placeholder="5" min="0.1" step="0.1" inputmode="decimal" oninput="autoUpdate()"><span class="unit">mm</span></div></div>`;document.getElementById('cpkt-list').appendChild(div);document.getElementById('cpkt-count-lbl').textContent=cpktItems.length+'個';redraw();autoUpdate();}
 function addEpkt(){const id=mkId();epktItems.push(id);const n=epktItems.length;const div=document.createElement('div');div.className='item-card';div.id='epkt-'+id;div.innerHTML=`<div class="item-header"><span class="item-tag">EPKT-${String(n).padStart(2,'0')}</span><button class="btn-remove" onclick="removeItem('epkt',${id})">この項目を削除</button><button class="btn-remove-all" onclick="removeAllItems('epkt')">全て削除</button></div><div class="frow"><div class="flabel">加工辺<span class="req">*</span></div><div class="finput"><select id="epkt-side-${id}" onchange="redraw();autoUpdate()"><option value="">選択</option><option value="bottom">下辺</option><option value="top">上辺</option><option value="right">右辺</option><option value="left">左辺</option></select></div></div><div class="frow"><div class="flabel">中心 C<span class="req">*</span></div><div class="finput"><input type="number" id="epkt-c-${id}" placeholder="50" min="0" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">口幅 A<span class="req">*</span></div><div class="finput"><input type="number" id="epkt-a-${id}" placeholder="30" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">奥行 B<span class="req">*</span></div><div class="finput"><input type="number" id="epkt-b-${id}" placeholder="15" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">コーナー R</div><div class="finput"><input type="number" id="epkt-r-${id}" placeholder="3" min="0" step="0.5" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">深さ<span class="req">*</span></div><div class="finput"><input type="number" id="epkt-z-${id}" placeholder="8" min="0.1" step="0.1" inputmode="decimal" oninput="autoUpdate()"><span class="unit">mm</span></div></div>`;document.getElementById('epkt-list').appendChild(div);document.getElementById('epkt-count-lbl').textContent=epktItems.length+'個';redraw();autoUpdate();}
 function addPkt(){const id=mkId();pktItems.push(id);const n=pktItems.length;const div=document.createElement('div');div.className='item-card';div.id='pkt-'+id;div.innerHTML=`<div class="item-header"><span class="item-tag">PKT-${String(n).padStart(2,'0')}</span><button class="btn-remove" onclick="removeItem('pkt',${id})">この項目を削除</button><button class="btn-remove-all" onclick="removeAllItems('pkt')">全て削除</button></div><div class="frow"><div class="flabel">幅 A（X）<span class="req">*</span></div><div class="finput"><input type="number" id="pkt-a-${id}" placeholder="30" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">幅 B（Y）<span class="req">*</span></div><div class="finput"><input type="number" id="pkt-b-${id}" placeholder="20" min="1" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">コーナー R</div><div class="finput"><input type="number" id="pkt-r-${id}" placeholder="5" min="0" step="0.5" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">深さ<span class="req">*</span></div><div class="finput"><input type="number" id="pkt-z-${id}" placeholder="10" min="0.1" step="0.1" inputmode="decimal" oninput="autoUpdate()"><span class="unit">mm</span></div></div><div class="sub-label" style="margin-top:10px">中心座標（右下原点基準）</div><div class="frow"><div class="flabel">右から C<span class="req">*</span></div><div class="finput"><input type="number" id="pkt-c-${id}" placeholder="50" min="0" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div><div class="frow"><div class="flabel">下から D<span class="req">*</span></div><div class="finput"><input type="number" id="pkt-d-${id}" placeholder="50" min="0" inputmode="decimal" oninput="redraw();autoUpdate()"><span class="unit">mm</span></div></div>`;document.getElementById('pkt-list').appendChild(div);document.getElementById('pkt-count-lbl').textContent=pktItems.length+'個';redraw();autoUpdate();}
@@ -1143,20 +1365,24 @@ function doPrint(){
   pw.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>工作依頼指示書</title><style>body{font-family:sans-serif;margin:0;padding:20px;color:#1a1a1a;}.h{display:flex;align-items:center;gap:16px;border-bottom:3px solid #c8281e;padding-bottom:10px;margin-bottom:16px;}.logo{font-size:22px;font-weight:700;color:#c8281e;}.ls{font-size:11px;color:#888;letter-spacing:2px;}.pt{font-size:16px;font-weight:700;margin-left:16px;padding-left:16px;border-left:2px solid #ccc;}.pd{margin-left:auto;font-size:11px;color:#888;}.cs{text-align:center;margin-bottom:16px;background:#0d1018;padding:16px;border-radius:4px;}.cs img{max-width:100%;}.ts{font-family:monospace;font-size:11px;line-height:1.8;white-space:pre-wrap;background:#f8f8f8;border:1px solid #eee;padding:12px;border-radius:4px;}@media print{@page{margin:10mm;}}</style></head><body><div class="h"><div><div class="logo">NORITSU</div><div class="ls">PRECISION</div></div><div class="pt">工作依頼指示書</div><div class="pd">${date}　${part}</div></div><div class="cs"><img src="${imgData}" alt="配置図面"></div><div class="ts">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><script>window.onload=function(){window.print();}<\/script></body></html>`);
   pw.document.close();
 }
+
 function sendMail(){
   if(!validate())return;
-  const mailTo=document.getElementById('mail-to').value;const mailCc=document.getElementById('mail-cc').value;const part=document.getElementById('req-part').value||'工作依頼';const date=document.getElementById('header-date').textContent;
+  const mailTo=document.getElementById('mail-to').value;
+  const mailCc=document.getElementById('mail-cc').value;
+  const subject=document.getElementById('work-subject')?.value||('【工作依頼】'+(document.getElementById('req-part').value||'工作依頼')+'　'+dateStr);
+  const body=generateText();
   const ccPart=mailCc?`&cc=${encodeURIComponent(mailCc)}`:'';
-  window.location.href=`mailto:${mailTo}${ccPart}?subject=${encodeURIComponent('【工作依頼】'+part+'　'+date)}&body=${encodeURIComponent(generateText())}`;
+  const gmailUrl=`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(mailTo)}${ccPart}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.open(gmailUrl,'_blank');
 }
+
 function copyText(){
   const text=generateText();const box=document.getElementById('alert-box');
   navigator.clipboard.writeText(text).then(()=>{box.textContent='✓ 指示書をコピーしました。';box.className='alert success';box.style.display='block';setTimeout(()=>{box.style.display='none';},4000);}).catch(()=>{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');box.textContent='✓ コピーしました。';box.className='alert success';box.style.display='block';setTimeout(()=>{box.style.display='none';},3000);}catch(e){}document.body.removeChild(ta);});
 }
 
-// 図面をPDFとして保存（キャンバス→PNG→印刷ダイアログでPDF保存）
 function downloadPDF(){
-  // モバイルはcv-mobile、PCはcvを使用
   const cvId=isMobile()?'cv-mobile':'cv';
   const canvas=document.getElementById(cvId);
   if(!canvas||!canvas.width){
@@ -1167,15 +1393,14 @@ function downloadPDF(){
   }
   const imgData=canvas.toDataURL('image/png');
   const part=document.getElementById('req-part').value||'図面';
-  const date=document.getElementById('header-date')?document.getElementById('header-date').textContent:(new Date().toLocaleDateString('ja-JP'));
+  const date=document.getElementById('header-date').textContent;
   const pw=window.open('','_blank','width=800,height=700');
   pw.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>図面_${part}</title><style>body{margin:0;padding:16px;background:#0d1018;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;}.title{font-family:sans-serif;font-size:14px;color:#aaa;margin-bottom:12px;}.img-wrap{background:#0d1018;padding:16px;border:1px solid #333;}img{max-width:100%;display:block;}@media print{body{background:#0d1018;}@page{margin:5mm;}}</style></head><body><div class="title">NORITSU PRECISION　図面　${part}　${date}</div><div class="img-wrap"><img src="${imgData}"></div><script>window.onload=function(){window.print();}<\/script></body></html>`);
   pw.document.close();
 }
 
-// 発注文を印刷
 function matPrint(){
-  const text=generateMatText();
+  const text=document.getElementById('mat-preview-text').value||generateMatText();
   const pw=window.open('','_blank','width=700,height=800');
   pw.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>材料発注</title><style>body{font-family:'Noto Sans JP',sans-serif;margin:0;padding:24px;color:#1a1a1a;max-width:600px;}.h{display:flex;align-items:center;gap:12px;border-bottom:3px solid #1565c0;padding-bottom:10px;margin-bottom:20px;}.logo{font-size:20px;font-weight:700;color:#1565c0;letter-spacing:1px;font-family:monospace;}.ls{font-size:10px;color:#888;letter-spacing:2px;}.pt{font-size:15px;font-weight:700;margin-left:12px;padding-left:12px;border-left:2px solid #ccc;color:#1565c0;}.body{font-family:monospace;font-size:13px;line-height:2;white-space:pre-wrap;background:#f0f7ff;border:1px solid #b3d1f5;padding:16px;border-radius:4px;}@media print{@page{margin:12mm;}}</style></head><body><div class="h"><div><div class="logo">NORITSU</div><div class="ls">PRECISION</div></div><div class="pt">材料発注</div></div><div class="body">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><script>window.onload=function(){window.print();}<\/script></body></html>`);
   pw.document.close();
@@ -1184,8 +1409,9 @@ function matPrint(){
 // ── INIT ──
 function initLayout(){
   setMobileStripHeight();resizeCanvas();updateFormPadding();
-  drawAllCanvas();autoUpdate();
-  // PCキャンバスのリサイズ（PCのみ）
+  drawAllCanvas();
+  if(currentMode==='mat')matAutoUpdate();
+  else autoUpdate();
   if(!isMobile()){
     setTimeout(()=>{
       const mc=document.getElementById('mat-cv');
@@ -1193,18 +1419,37 @@ function initLayout(){
       if(mc&&mw&&mw.clientWidth){mc.width=mw.clientWidth;mc.height=mw.clientHeight;drawMatPreview();}
     },200);
   }
-  // モバイルではPC用パネルを確実に非表示
   if(isMobile()){
     document.getElementById('work-canvas-panel').style.display='none';
     document.getElementById('mat-canvas-panel').style.display='none';
   }
 }
-document.addEventListener('DOMContentLoaded',()=>{updateGaiCornerState();loadSettings();if(matItems.length===0)addMatItem();initLayout();setTimeout(initLayout,100);setTimeout(initLayout,500);});
+
+document.addEventListener('DOMContentLoaded',()=>{
+  updateGaiCornerState();
+  loadSettings();
+  restoreWorkState();
+  const matRestored=restoreMatState();
+  if(!matRestored&&matItems.length===0)addMatItem();
+  updateWorkSubject();
+  updateMatSubject();
+
+  // デフォルト：材料発注（青）モード
+  switchMode('mat');
+
+  initLayout();
+  setTimeout(initLayout,100);
+  setTimeout(initLayout,500);
+  setTimeout(()=>{
+    autoUpdate();
+    matAutoUpdate();
+  },200);
+});
 window.addEventListener('load',()=>{initLayout();setTimeout(initLayout,200);checkPWA();});
 window.addEventListener('resize',()=>{initLayout();});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')initLayout();});
 
-// ── iOS スクロールズレ修正（iOS26対応） ──
+// ── iOS スクロールズレ修正 ──
 (function(){
   let savedY=0,isInputFocused=false;
   document.addEventListener('focusin',(e)=>{
